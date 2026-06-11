@@ -1279,7 +1279,7 @@
           <label>Corner radius <input type="range" id="pv-r" min="0" max="36" value="14"></label>
           <label>Section spacing <input type="range" id="pv-pad" min="30" max="120" value="78"></label>
           <label>Button style <select id="pv-btn"><option value="solid">Solid</option><option value="grad">Gradient</option></select></label>
-          <p class="ed-hint">Click any text to edit it. Click an image to replace it. Hover a section for move / duplicate / hide / delete controls. Changes auto-save and restore on reload.</p>
+          <p class="ed-hint">Click any text to edit it. Click an image to replace it with an image or video. Hover a section for move / duplicate / hide / delete controls. Changes auto-save and restore on reload. Switch to <b>Preview</b> to play videos. <b>Export</b> / <b>Download</b> produce a clean, non-editable funnel.</p>
         </aside>
         <div class="ed-modal ed-ui" id="ed-modal"><div class="ed-modal-in"><h4 id="ed-modal-t">Replace media</h4><input type="file" id="ed-file" accept="image/*,video/*"><div class="ed-or">— or paste an image / video URL (YouTube, Vimeo, .mp4) —</div><input type="text" id="ed-url" placeholder="https://..."><div class="ed-modal-actions"><button class="ed-btn" id="ed-bg-remove" style="margin-right:auto;display:none">Remove</button><button class="ed-btn" id="ed-cancel">Cancel</button><button class="ed-btn primary" id="ed-url-go">Use URL</button></div></div></div>
         <div class="ed-toast ed-ui" id="ed-toast"></div>
@@ -1376,7 +1376,9 @@
         function doRedo(){if(!redo.length)return;undo.push(snap());applySnap(redo.pop());flash('Redo');}
         document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase();if((e.ctrlKey||e.metaKey)&&k==='z'){e.preventDefault();e.shiftKey?doRedo():doUndo();}else if((e.ctrlKey||e.metaKey)&&k==='y'){e.preventDefault();doRedo();}else if((e.ctrlKey||e.metaKey)&&k==='s'){e.preventDefault();save();}});
         function dl(txt,name){var b=new Blob([txt],{type:'text/html'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},1500);}
-        function exportHTML(){var links='';document.querySelectorAll('head link').forEach(function(l){links+=l.outerHTML;});var base=document.getElementById('ed-base').innerHTML;var ov=':root{',v=vars();for(var k in v)ov+=k+':'+v[k]+';';ov+='}';var doc='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+links+'<style>'+base+'</style><style>'+ov+'</style></head><body><div id="funnel">'+clean()+'</div></body></html>';dl(doc,'funnel.html');flash('Exported HTML');}
+        function buildClean(){var links='';document.querySelectorAll('head link').forEach(function(l){links+=l.outerHTML;});var base=document.getElementById('ed-base').innerHTML;var ov=':root{',v=vars();for(var k in v)ov+=k+':'+v[k]+';';ov+='}';return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+links+'<style>'+base+'</style><style>'+ov+'</style></head><body><div id="funnel">'+clean()+'</div></body></html>';}
+        function exportHTML(){dl(buildClean(),'funnel.html');flash('Exported — non-editable funnel');}
+        try{window.__funnelExport=buildClean;}catch(e){}
         restore(); setEdit(true);
       })();
       <\/script>`;
@@ -1420,7 +1422,11 @@
 
     $("#ovCopy").onclick=()=>copyText(promptEl.dataset.raw, $("#ovCopy"), true);
     $("#ovDownload").onclick=()=>{
-      const blob=new Blob([lastFunnel],{type:"text/html"});
+      // download the CLEAN, non-editable funnel (with your edits + playable media) from the live editor;
+      // fall back to the raw generated HTML if the editor isn't reachable
+      let out=lastFunnel;
+      try{ const w=iframe.contentWindow; if(w && typeof w.__funnelExport==="function") out=w.__funnelExport(); }catch(e){}
+      const blob=new Blob([out],{type:"text/html"});
       const url=URL.createObjectURL(blob), a=document.createElement("a");
       const name=(state.niche||"funnel").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
       a.href=url; a.download=(name||"funnel")+".html"; document.body.appendChild(a); a.click();
