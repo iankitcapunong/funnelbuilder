@@ -1018,7 +1018,7 @@
         :root{--bg:${p.bg};--alt:${p.alt};--text:${p.text};--muted:${p.muted};--accent:${p.accent};--accent2:${p.accent2};--card:${p.card};--border:${p.border};--on:${p.onAccent};--soft:${p.soft};--tint:${p.tint};--ring:${p.ring};--glow:${p.glow};--icon:${p.icon};--r:${radius};--btnr:${btnRadius};--btnbg:${btnBg};--head:${headFont};--body:${bodyFont};--hw:${headWeight};--tr:${tracking};--icr:${iconShape};--pad:${pad}px;--cw:${cw}px;--sh:${shadowSoft}}
         html{scroll-behavior:smooth}
         body{background:var(--bg);${motifBg}color:var(--text);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased}
-        img{max-width:100%;display:block}
+        img{max-width:100%;display:block;object-fit:cover}
         .container{max-width:var(--cw);margin:0 auto;padding:0 24px}
         .narrow{max-width:760px}.center{text-align:center}
         h1,h2,h3{font-family:var(--head);font-weight:var(--hw);letter-spacing:var(--tr);line-height:1.12}
@@ -1060,8 +1060,9 @@
         .mockup{width:100%;max-width:560px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1)}
         .mockup.wide{max-width:980px;margin:0 auto}
         .mbar{display:flex;gap:7px;padding:12px 14px;background:#1c1c22}.mbar i{width:11px;height:11px;border-radius:50%;background:#3a3a44}.mbar i:first-child{background:#ff5f57}.mbar i:nth-child(2){background:#febc2e}.mbar i:nth-child(3){background:#28c840}
-        .mockup img{width:100%;height:auto;display:block}
-        .photocard{position:relative;max-width:460px;border-radius:calc(var(--r) + 8px);overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.5)}
+        .mockup img{width:100%;aspect-ratio:16/10;height:auto;object-fit:cover;display:block}
+        .mockup.wide img{aspect-ratio:16/8}
+        .photocard{position:relative;max-width:460px;aspect-ratio:4/5;border-radius:calc(var(--r) + 8px);overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.5)}
         .photocard img{width:100%;height:100%;object-fit:cover}
         .pc-badge{position:absolute;left:16px;bottom:16px;background:rgba(255,255,255,.92);color:#f6b51e;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:1px}
         .glasscard{display:flex;flex-direction:column;gap:18px;background:rgba(255,255,255,.1);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.2);border-radius:calc(var(--r) + 8px);padding:30px 34px;max-width:380px;width:100%}
@@ -1125,8 +1126,8 @@
         .auth{display:grid;grid-template-columns:.85fr 1.15fr;gap:46px;align-items:center}
         .auth.rev{direction:rtl}.auth.rev>*{direction:ltr}
         @media(max-width:840px){.auth{grid-template-columns:1fr;gap:30px}.auth.rev{direction:ltr}}
-        .auth-photo{position:relative;border-radius:calc(var(--r) + 6px);overflow:hidden;box-shadow:var(--sh)}
-        .auth-img{width:100%;height:100%;min-height:360px;object-fit:cover}
+        .auth-photo{position:relative;border-radius:calc(var(--r) + 6px);overflow:hidden;box-shadow:var(--sh);aspect-ratio:4/5}
+        .auth-img{width:100%;height:100%;object-fit:cover}
         .auth-chip{position:absolute;left:16px;bottom:16px;background:var(--accent);color:var(--on);padding:8px 14px;border-radius:999px;font-size:13px;font-weight:700}
         .auth-title{color:var(--accent);font-weight:600;margin:2px 0 14px}
         .creds{display:flex;gap:30px;flex-wrap:wrap;margin:22px 0}
@@ -1275,7 +1276,7 @@
         var FN=document.getElementById('funnel'); if(!FN) return;
         var fid=(document.body.getAttribute('data-fid')||'x'), KEY='ezfunnel:'+fid;
         var editing=false, undo=[], redo=[], st, imT=null, imM=null;
-        var EDS='h1,h2,h3,h4,p,span,a,li,summary,b,strong,em,blockquote,.bigprice,.price';
+        var EDS='h1,h2,h3,h4,p,span,a,button,li,summary,b,strong,em,blockquote,.bigprice,.price,.badge,.eyebrow,.kicker,.auth-title,.brand,.ftag,.sname,.sval,.ps-sol,.stat b,.gstat b,.metrics b,.creds b';
         function $(s){return document.querySelector(s);}
         function flash(t){var e=$('#ed-toast');e.textContent=t;e.classList.add('show');setTimeout(function(){e.classList.remove('show');},1400);}
         function vars(){var s=document.documentElement.style,o={},ks=['--accent','--accent2','--text','--bg','--alt','--card','--head','--body','--r','--pad','--btnbg'];ks.forEach(function(k){var v=s.getPropertyValue(k);if(v)o[k]=v;});return o;}
@@ -1297,7 +1298,8 @@
             sec.appendChild(bar);
           }
         }
-        function bindEdit(){FN.querySelectorAll(EDS).forEach(function(el){if(el.closest('.ed-secbar'))return;if(el.children.length===0)el.setAttribute('contenteditable','true');});}
+        function leafish(el){if(!el.children.length)return true;var ok=['B','EM','STRONG','SPAN','S','SMALL','BR','I','U'];for(var i=0;i<el.children.length;i++){if(ok.indexOf(el.children[i].tagName)<0)return false;}return true;}
+        function bindEdit(){FN.querySelectorAll(EDS).forEach(function(el){if(el.closest('.ed-secbar'))return;if(el.parentElement&&el.parentElement.closest('[contenteditable="true"]'))return;if(leafish(el))el.setAttribute('contenteditable','true');});}
         function unbindEdit(){FN.querySelectorAll('[contenteditable]').forEach(function(e){e.removeAttribute('contenteditable');});}
         function setEdit(on){editing=on;document.body.classList.toggle('editing',on);$('#ed-edit').textContent=on?'Preview':'Edit';if(on){initSecs();bindEdit();}else{unbindEdit();}}
         FN.addEventListener('click',function(e){
@@ -1314,6 +1316,7 @@
         FN.addEventListener('click',function(e){
           if(!editing)return; if(e.target.closest('.ed-secbar'))return;
           var im=e.target.closest('img'); if(im){e.preventDefault();e.stopPropagation();openImg(im,'img');return;}
+          var inp=e.target.closest('input,textarea'); if(inp){e.preventDefault();var nv=prompt('Placeholder text:',inp.getAttribute('placeholder')||'');if(nv!==null){pushUndo();inp.setAttribute('placeholder',nv);autosave();}return;}
           var a=e.target.closest('a'); if(a)e.preventDefault();
         },true);
         FN.addEventListener('focusin',function(e){if(editing&&e.target.isContentEditable)pushUndo();});
