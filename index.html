@@ -448,7 +448,9 @@
       luxury: {label:"Luxury & Elegant", sw:"linear-gradient(135deg,#1a1814,#bda06a)",
         prompt:"Design style: Elegant and luxurious. Dark or cream backgrounds, serif headings, lots of breathing room, gold or muted accent tones. Feels like a high-end editorial magazine. Think Apple or Aesop."},
       vibrant:{label:"Vibrant & Gradient", sw:"linear-gradient(135deg,#8b6cff,#42d4ff)",
-        prompt:"Design style: Vibrant with gradients. Bold color gradients on hero and CTAs, dark base, glowing accents. Feels cutting-edge and energetic. Think a modern AI startup."}
+        prompt:"Design style: Vibrant with gradients. Bold color gradients on hero and CTAs, dark base, glowing accents. Feels cutting-edge and energetic. Think a modern AI startup."},
+      greengold:{label:"Green & Gold", sw:"linear-gradient(135deg,#1d7a54,#d8b04f)",
+        prompt:"Design style: Fresh green and gold. Rich emerald greens paired with warm gold accents on a clean or deep base. Feels premium, natural, and trustworthy — think a high-end wellness, finance, or eco brand."}
     };
 
     // ---- state ----
@@ -656,7 +658,8 @@
       warm:    {hues:[26,36,16,44,8],       darkBias:.22, serif:false, grad:false},
       playful: {hues:[330,300,346,276,188], darkBias:.20, serif:false, grad:false},
       luxury:  {hues:[43,38,47,30,18],      darkBias:.68, serif:true,  grad:false},
-      vibrant: {hues:[266,210,180,322,142], darkBias:.88, serif:false, grad:true}
+      vibrant: {hues:[266,210,180,322,142], darkBias:.88, serif:false, grad:true},
+      greengold:{hues:[150,148,156,140],    darkBias:.42, serif:false, grad:false, gold:true}
     };
 
     function makePalette(vibe){
@@ -665,7 +668,7 @@
       const dark= Math.random() < cfg.darkBias;
       const scheme = pick(["analogous","analogous","complement","triad","split","mono"]);
       const off = scheme==="complement"?180:scheme==="triad"?120:scheme==="split"?(chance(.5)?150:210):scheme==="mono"?0:(chance(.5)?32:-32);
-      const h2  = h+off;
+      const h2  = cfg.gold ? 45 + rint(-6,8) : h+off;
       const accS= rint(58,90);
       const accL= dark ? rint(56,70) : rint(40,54);
       const accent  = hsl(h,accS,accL);
