@@ -334,6 +334,7 @@
         </div>
         <button class="ov-btn" id="ovShuffle" title="Generate a fresh variation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/></svg><span class="lbl">Shuffle</span></button>
         <button class="ov-btn" id="ovDownload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="lbl">Download HTML</span></button>
+        <button class="ov-btn" id="ovCopyHtml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span class="lbl">Copy HTML</span></button>
         <button class="ov-btn primary" id="ovCopy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span class="lbl">Copy prompt</span></button>
         <button class="ov-close" id="ovClose" title="Close (Esc)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
@@ -1267,6 +1268,7 @@
           <span class="ed-seg" id="ed-seg"><button data-d="desktop" class="on" title="Desktop">🖥</button><button data-d="tablet" title="Tablet">▭</button><button data-d="mobile" title="Mobile">▯</button></span>
           <button class="ed-btn" id="ed-style">🎨 Style</button>
           <button class="ed-btn" id="ed-save">Save</button>
+          <button class="ed-btn" id="ed-copy">&lt;/&gt; Copy HTML</button>
           <button class="ed-btn primary" id="ed-export">Export HTML</button>
         </div>
         <aside class="ed-panel ed-ui" id="ed-panel">
@@ -1359,6 +1361,8 @@
         $('#ed-style').addEventListener('click',function(){$('#ed-panel').classList.toggle('show');});
         $('#ed-save').addEventListener('click',save);
         $('#ed-export').addEventListener('click',exportHTML);
+        function copyHTML(){var t=buildClean();function fb(){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.top='-9999px';document.body.appendChild(ta);ta.focus();ta.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}ta.remove();flash(ok?'HTML copied to clipboard':'Copy failed — use Export');}try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){flash('HTML copied to clipboard');},fb);}else{fb();}}catch(e){fb();}}
+        $('#ed-copy').addEventListener('click',copyHTML);
         var seg=$('#ed-seg');
         seg.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;for(var i=0;i<seg.children.length;i++)seg.children[i].classList.remove('on');b.classList.add('on');device(b.getAttribute('data-d'));});
         function device(d){FN.classList.remove('is-tablet','is-mobile');if(d==='tablet'){FN.classList.add('is-tablet');FN.style.maxWidth='820px';FN.style.margin='0 auto';}else if(d==='mobile'){FN.classList.add('is-mobile');FN.style.maxWidth='402px';FN.style.margin='0 auto';}else{FN.style.maxWidth='';FN.style.margin='';}}
@@ -1421,6 +1425,11 @@
     });
 
     $("#ovCopy").onclick=()=>copyText(promptEl.dataset.raw, $("#ovCopy"), true);
+    $("#ovCopyHtml").onclick=()=>{
+      let out=lastFunnel;
+      try{ const w=iframe.contentWindow; if(w && typeof w.__funnelExport==="function") out=w.__funnelExport(); }catch(e){}
+      copyText(out, $("#ovCopyHtml"), true);
+    };
     $("#ovDownload").onclick=()=>{
       // download the CLEAN, non-editable funnel (with your edits + playable media) from the live editor;
       // fall back to the raw generated HTML if the editor isn't reachable
