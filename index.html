@@ -1022,6 +1022,10 @@
         html{scroll-behavior:smooth}
         body{background:var(--bg);${motifBg}color:var(--text);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased}
         img{max-width:100%;display:block;object-fit:cover}
+        .ed-media{display:block;width:100%;height:100%;min-height:200px;object-fit:cover;border:0;background:#000;border-radius:inherit}
+        .mockup .ed-media{aspect-ratio:16/10;height:auto;min-height:0}
+        .photocard .ed-media,.auth-photo .ed-media,.ps-photo .ed-media{height:100%;min-height:100%}
+        video.ed-media,iframe.ed-media{object-fit:cover}
         .container{max-width:var(--cw);margin:0 auto;padding:0 24px}
         .narrow{max-width:760px}.center{text-align:center}
         h1,h2,h3{font-family:var(--head);font-weight:var(--hw);letter-spacing:var(--tr);line-height:1.12}
@@ -1229,7 +1233,9 @@
         .ed-secbar button:hover{background:rgba(255,255,255,.2)}
         body.editing #funnel [contenteditable]:hover{outline:1px solid rgba(108,92,231,.45);outline-offset:2px;border-radius:3px}
         body.editing #funnel [contenteditable]:focus{outline:2px solid #6c5ce7;outline-offset:2px;border-radius:3px}
-        body.editing #funnel img{cursor:pointer}
+        body.editing #funnel img,body.editing #funnel .ed-media,body.editing #funnel .photocard,body.editing #funnel .auth-photo,body.editing #funnel .ps-photo,body.editing #funnel .mockup{cursor:pointer}
+        body.editing #funnel iframe,body.editing #funnel video{pointer-events:none}
+        body.editing #funnel .ed-media:hover,body.editing #funnel .photocard:hover .ed-media,body.editing #funnel .auth-photo:hover .ed-media{outline:2px solid #6c5ce7;outline-offset:2px}
         body.editing #funnel img:hover{outline:2px solid #6c5ce7;outline-offset:2px}
         .ed-hidden{display:none}
         body.editing .ed-hidden{display:block;opacity:.32;outline:2px dashed #888}
@@ -1275,7 +1281,7 @@
           <label>Button style <select id="pv-btn"><option value="solid">Solid</option><option value="grad">Gradient</option></select></label>
           <p class="ed-hint">Click any text to edit it. Click an image to replace it. Hover a section for move / duplicate / hide / delete controls. Changes auto-save and restore on reload.</p>
         </aside>
-        <div class="ed-modal ed-ui" id="ed-modal"><div class="ed-modal-in"><h4 id="ed-modal-t">Replace image</h4><input type="file" id="ed-file" accept="image/*"><div class="ed-or">— or paste an image URL —</div><input type="text" id="ed-url" placeholder="https://..."><div class="ed-modal-actions"><button class="ed-btn" id="ed-bg-remove" style="margin-right:auto;display:none">Remove</button><button class="ed-btn" id="ed-cancel">Cancel</button><button class="ed-btn primary" id="ed-url-go">Use URL</button></div></div></div>
+        <div class="ed-modal ed-ui" id="ed-modal"><div class="ed-modal-in"><h4 id="ed-modal-t">Replace media</h4><input type="file" id="ed-file" accept="image/*,video/*"><div class="ed-or">— or paste an image / video URL (YouTube, Vimeo, .mp4) —</div><input type="text" id="ed-url" placeholder="https://..."><div class="ed-modal-actions"><button class="ed-btn" id="ed-bg-remove" style="margin-right:auto;display:none">Remove</button><button class="ed-btn" id="ed-cancel">Cancel</button><button class="ed-btn primary" id="ed-url-go">Use URL</button></div></div></div>
         <div class="ed-toast ed-ui" id="ed-toast"></div>
       `;
 
@@ -1322,18 +1328,28 @@
         });
         FN.addEventListener('click',function(e){
           if(!editing)return; if(e.target.closest('.ed-secbar'))return;
-          var im=e.target.closest('img'); if(im){e.preventDefault();e.stopPropagation();openImg(im,'img');return;}
+          var im=e.target.closest('img,video,iframe,.ed-media'); if(!im){var box=e.target.closest('.photocard,.auth-photo,.ps-photo,.mockup');if(box)im=box.querySelector('img,video,iframe,.ed-media');} if(im){e.preventDefault();e.stopPropagation();openImg(im,'img');return;}
           var inp=e.target.closest('input,textarea'); if(inp){e.preventDefault();var nv=prompt('Placeholder text:',inp.getAttribute('placeholder')||'');if(nv!==null){pushUndo();inp.setAttribute('placeholder',nv);autosave();}return;}
           var a=e.target.closest('a'); if(a)e.preventDefault();
         },true);
         FN.addEventListener('focusin',function(e){if(editing&&e.target.isContentEditable)pushUndo();});
         FN.addEventListener('input',function(){if(editing)autosave();});
-        function openImg(t,m){imT=t;imM=m;$('#ed-url').value='';$('#ed-modal-t').textContent=(m==='bg'?'Replace section background':'Replace image');var rb=$('#ed-bg-remove');rb.style.display=(m==='bg')?'inline-block':'none';rb.textContent=(t.classList&&(t.classList.contains('ed-hasbg')||t.classList.contains('hero')||t.classList.contains('finalcta')))?'Remove background':'Remove';$('#ed-modal').classList.add('show');}
+        function openImg(t,m){imT=t;imM=m;$('#ed-url').value='';$('#ed-modal-t').textContent=(m==='bg'?'Replace section background':'Replace media (image or video)');var rb=$('#ed-bg-remove');rb.style.display=(m==='bg')?'inline-block':'none';rb.textContent=(t.classList&&(t.classList.contains('ed-hasbg')||t.classList.contains('hero')||t.classList.contains('finalcta')))?'Remove background':'Remove';$('#ed-modal').classList.add('show');}
         function closeImg(){$('#ed-modal').classList.remove('show');imT=null;}
-        function useSrc(src){if(!imT)return;pushUndo();if(imM==='bg'){var u='url("'+src+'")';if(imT.classList.contains('hero')||imT.classList.contains('finalcta')){imT.style.setProperty('--heroimg',u);imT.style.setProperty('--ctaimg',u);}else{imT.style.setProperty('--secbg',u);imT.classList.add('ed-hasbg');}}else{imT.src=src;}closeImg();autosave();flash('Background updated');}
+        function clip(s){return s.split('&')[0].split('?')[0].split('#')[0].split('/')[0];}
+        function ytEmbed(u){var id='';if(u.indexOf('youtu.be/')>-1)id=clip(u.split('youtu.be/')[1]||'');else if(u.indexOf('v=')>-1)id=clip(u.split('v=')[1]||'');else if(u.indexOf('/embed/')>-1)id=clip(u.split('/embed/')[1]||'');else if(u.indexOf('/shorts/')>-1)id=clip(u.split('/shorts/')[1]||'');if(id&&u.indexOf('vimeo')<0)return 'https://www.youtube.com/embed/'+id;if(u.indexOf('vimeo.com/')>-1){var v=clip((u.split('vimeo.com/')[1]||'').replace('video/',''));if(v&&/^[0-9]+$/.test(v))return 'https://player.vimeo.com/video/'+v;}return null;}
+        function isVid(u){var b=u.toLowerCase().split('?')[0].split('#')[0];return b.slice(-4)==='.mp4'||b.slice(-5)==='.webm'||b.slice(-4)==='.ogg'||b.slice(-4)==='.mov';}
+        function setMedia(src,isVideoFile){if(!imT)return;
+          if(imM==='bg'){pushUndo();var u='url("'+src+'")';if(imT.classList.contains('hero')||imT.classList.contains('finalcta')){imT.style.setProperty('--heroimg',u);imT.style.setProperty('--ctaimg',u);}else{imT.style.setProperty('--secbg',u);imT.classList.add('ed-hasbg');}closeImg();autosave();flash('Background updated');return;}
+          pushUndo();var embed=ytEmbed(src),newEl,isV=false;
+          if(embed){newEl=document.createElement('iframe');newEl.src=embed;newEl.setAttribute('allow','autoplay; encrypted-media; fullscreen; picture-in-picture');newEl.setAttribute('allowfullscreen','');isV=true;}
+          else if(isVideoFile||isVid(src)){newEl=document.createElement('video');newEl.src=src;newEl.controls=true;newEl.setAttribute('playsinline','');isV=true;}
+          else{if(imT.tagName==='IMG'){imT.src=src;closeImg();autosave();flash('Image updated');return;}newEl=document.createElement('img');newEl.src=src;}
+          var cls=(imT.getAttribute('class')||'').split(' ').filter(function(x){return x&&x!=='ed-media';});cls.push('ed-media');newEl.className=cls.join(' ');
+          imT.parentNode.replaceChild(newEl,imT);imT=newEl;closeImg();autosave();flash(isV?'Video added':'Image updated');}
         function removeBg(){if(!imT)return;pushUndo();imT.classList.remove('ed-hasbg');imT.style.removeProperty('--secbg');imT.style.removeProperty('--heroimg');imT.style.removeProperty('--ctaimg');closeImg();autosave();flash('Background removed');}
-        $('#ed-file').addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){useSrc(r.result);};r.readAsDataURL(f);});
-        $('#ed-url-go').addEventListener('click',function(){var u=$('#ed-url').value.trim();if(u)useSrc(u);});
+        $('#ed-file').addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){setMedia(r.result,f.type.indexOf('video')===0);};r.readAsDataURL(f);});
+        $('#ed-url-go').addEventListener('click',function(){var u=$('#ed-url').value.trim();if(u)setMedia(u,false);});
         $('#ed-cancel').addEventListener('click',closeImg);
         $('#ed-bg-remove').addEventListener('click',removeBg);
         $('#ed-modal').addEventListener('click',function(e){if(e.target===this)closeImg();});
