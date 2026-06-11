@@ -110,6 +110,21 @@
     .style .nm{font-size:12.5px;font-weight:560;color:var(--text-muted)}
     .style.on .nm{color:#fff}
 
+    /* custom colors */
+    .custom-colors{margin-top:14px;border:1px solid var(--border);border-radius:14px;padding:14px 15px;background:var(--surface-raised);transition:.16s}
+    .custom-colors.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+    .cc-head{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;color:var(--text-muted);margin-bottom:13px}
+    .cc-dot{width:12px;height:12px;border-radius:50%;border:1px solid var(--border-hover);background:linear-gradient(135deg,var(--accent),var(--gold))}
+    .custom-colors.on .cc-dot{box-shadow:0 0 0 3px var(--accent-soft)}
+    .cc-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+    .cc-field{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:550;color:var(--text-muted)}
+    .cc-field input[type=color]{width:40px;height:30px;border:1px solid var(--border);background:none;padding:2px;border-radius:8px;cursor:pointer}
+    .cc-base{display:flex;align-items:center;gap:4px;margin-left:auto}
+    .cc-base span{font-size:12.5px;color:var(--text-dim);margin-right:4px}
+    .cc-base button{border:1px solid var(--border);background:var(--surface);color:var(--text-muted);border-radius:8px;padding:6px 10px;font-size:12.5px;font-weight:550;cursor:pointer;font-family:inherit;transition:.14s}
+    .cc-base button:hover{border-color:var(--border-hover);color:var(--text)}
+    .cc-base button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+
     /* sections / drag */
     .sec-cat{display:flex;flex-wrap:wrap;gap:8px}
     .add-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:520;
@@ -267,6 +282,14 @@
           <div class="step-h"><span class="step-n">3</span><span class="step-t">Pick your style</span></div>
           <p class="step-d">This shapes the whole look and feel.</p>
           <div class="styles" id="styles"></div>
+          <div class="custom-colors" id="customColors">
+            <div class="cc-head"><span class="cc-dot" id="ccDot"></span> Or customize your own colors</div>
+            <div class="cc-row">
+              <label class="cc-field">Primary<input type="color" id="ccAccent" value="#1d7a54"></label>
+              <label class="cc-field">Accent<input type="color" id="ccAccent2" value="#c39a3c"></label>
+              <div class="cc-base"><span>Base</span><button type="button" data-b="auto" class="on">Auto</button><button type="button" data-b="light">Light</button><button type="button" data-b="dark">Dark</button></div>
+            </div>
+          </div>
         </div>
 
         <div class="card">
@@ -458,7 +481,8 @@
     const state = {
       desc:"", niche:"", ftype:"sales", vibe:"bold",
       sections:["Hero Offer","Problem","Benefits","Offer Stack","Authority","Testimonials","Guarantee","Pricing","FAQ","Final CTA","Footer"],
-      cta:""
+      cta:"",
+      custom:{accent:"#1d7a54", accent2:"#c39a3c", base:"auto"}
     };
 
     const $ = s => document.querySelector(s);
@@ -502,9 +526,26 @@
       b.onclick=()=>{
         state.vibe=id;
         [...stylesEl.children].forEach(c=>c.classList.remove("on"));
-        b.classList.add("on"); render();
+        b.classList.add("on"); ccPanel.classList.remove("on"); render();
       };
       stylesEl.appendChild(b);
+    });
+
+    // ---- custom colors ----
+    const ccPanel=$("#customColors"), ccAccent=$("#ccAccent"), ccAccent2=$("#ccAccent2");
+    function activateCustom(){
+      state.vibe="custom";
+      state.custom={accent:ccAccent.value, accent2:ccAccent2.value, base:state.custom.base};
+      [...stylesEl.children].forEach(c=>c.classList.remove("on"));
+      ccPanel.classList.add("on");
+      render();
+    }
+    ccAccent.addEventListener("input",activateCustom);
+    ccAccent2.addEventListener("input",activateCustom);
+    $(".cc-base").addEventListener("click",e=>{
+      const b=e.target.closest("button"); if(!b) return;
+      [...e.currentTarget.querySelectorAll("button")].forEach(x=>x.classList.remove("on"));
+      b.classList.add("on"); state.custom.base=b.dataset.b; activateCustom();
     });
 
     // ---- catalog (add buttons) ----
@@ -568,7 +609,9 @@
     // ---- prompt builder ----
     function buildPrompt(){
       const ft = FTYPES.find(f=>f.id===state.ftype);
-      const style = STYLES[state.vibe] ? STYLES[state.vibe].prompt
+      const style = state.vibe==="custom"
+        ? ("Design style: Use this exact custom color palette — primary color "+state.custom.accent+", accent color "+state.custom.accent2+", on a "+(state.custom.base==="auto"?"fitting":state.custom.base)+" background. Build a cohesive, modern, premium design around these two colors (use tints/shades of them for surfaces, borders, and gradients).")
+        : STYLES[state.vibe] ? STYLES[state.vibe].prompt
         : "Choose the best design style based on the type of business described. Make it premium and modern.";
       const secs = state.sections.length
         ? state.sections.map((k,i)=>(i+1)+". "+(SECTIONS[k]?SECTIONS[k].prompt:k)).join("\n")
@@ -652,6 +695,7 @@
     const pickN  = (a,n) => shuffle(a).slice(0,n);
     const hsl    = (h,s,l) => `hsl(${Math.round((h%360+360)%360)} ${Math.round(s)}% ${Math.round(l)}%)`;
     const hsla   = (h,s,l,a) => `hsla(${Math.round((h%360+360)%360)} ${Math.round(s)}% ${Math.round(l)}% / ${a})`;
+    function hexToHsl(hex){hex=(hex||"#000000").replace("#","");if(hex.length===3)hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];var r=parseInt(hex.slice(0,2),16)/255,g=parseInt(hex.slice(2,4),16)/255,b=parseInt(hex.slice(4,6),16)/255,max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2;if(max!==min){var d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);if(max===r)h=(g-b)/d+(g<b?6:0);else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h/=6;}return [Math.round(h*360),Math.round(s*100),Math.round(l*100)];}
 
     const STYLECFG = {
       clean:   {hues:[212,228,246,200,160], darkBias:.18, serif:false, grad:false},
@@ -664,6 +708,25 @@
     };
 
     function makePalette(vibe){
+      if(vibe==="custom" && state.custom){
+        const c=state.custom, a=hexToHsl(c.accent), a2=hexToHsl(c.accent2);
+        const h=a[0], aS=a[1], aL=a[2];
+        const dark = c.base==="dark" ? true : c.base==="light" ? false : (aL<58);
+        const accent=c.accent, accent2=c.accent2;
+        const onAccent = aL<62 ? "#ffffff" : (dark?"#0e0e13":"#16140d");
+        const soft=hsla(h,aS,aL,.12), tint=hsla(h,aS,aL,.08), ring=hsla(h,aS,aL,.32), glow=hsla(h,aS,aL,dark?.40:.28), icon=hsla(h,aS,aL,.14);
+        let bg,alt,card,text,muted,border,heroBg,heroText;
+        if(dark){
+          bg=hsl(h,16,6); alt=hsl(h,15,11); card=hsl(h,14,13);
+          text=hsl(h,16,96); muted=hsl(h,11,68); border=hsl(h,14,21); heroText=text;
+          heroBg=`radial-gradient(760px 460px at ${pick([28,50,74])}% -12%, ${hsla(h,46,24,.9)}, transparent), ${bg}`;
+        }else{
+          bg=hsl(h,30,97); alt=hsl(h,28,93); card="#ffffff";
+          text=hsl(h,32,12); muted=hsl(h,14,38); border=hsl(h,24,88); heroText=text;
+          heroBg=`linear-gradient(165deg, ${hsl(h,42,97)}, ${hsl(a2[0],46,92)})`;
+        }
+        return {dark,accent,accent2,onAccent,bg,alt,card,text,muted,border,heroBg,heroText,soft,tint,ring,glow,icon,hue:h,hue2:a2[0],accS:aS,accL:aL};
+      }
       const cfg = STYLECFG[vibe] || STYLECFG.bold;
       const h   = pick(cfg.hues) + rint(-18,18);
       const dark= Math.random() < cfg.darkBias;
@@ -1396,7 +1459,7 @@
     function renderFunnel(){
       lastFunnel = buildFunnelHTML();
       iframe.srcdoc = lastFunnel;
-      const style = STYLES[state.vibe]?STYLES[state.vibe].label:"preview";
+      const style = state.vibe==="custom" ? "Custom colors" : (STYLES[state.vibe]?STYLES[state.vibe].label:"preview");
       $("#ovTag").textContent = variant>0 ? style+" · variant "+(variant+1) : style;
     }
     function openFunnel(){
