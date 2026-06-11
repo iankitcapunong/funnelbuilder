@@ -1026,6 +1026,11 @@
         p{color:var(--muted)}.muted{color:var(--muted)}
         .announce{background:var(--accent);color:var(--on);text-align:center;padding:10px 14px;font-size:13.5px;font-weight:600}
         .sec{padding:var(--pad) 0;position:relative}.sec.slim{padding:40px 0}.sec.alt{background:var(--alt)}
+        .ed-hasbg{background-image:var(--secbg);background-size:cover;background-position:center;background-repeat:no-repeat;position:relative}
+        .ed-hasbg::before{content:"";position:absolute;inset:0;z-index:0;background:color-mix(in srgb, var(--bg) 72%, transparent)}
+        .sec.alt.ed-hasbg::before,.sec.urgency.ed-hasbg::before,.sec.optin.ed-hasbg::before{background:color-mix(in srgb, var(--alt) 72%, transparent)}
+        .ffoot.ed-hasbg::before{background:color-mix(in srgb, #0c0e14 74%, transparent)}
+        .ed-hasbg>.container{position:relative;z-index:1}
         .eyebrow{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.09em;color:var(--accent);margin-bottom:14px;${ebUpper?"text-transform:uppercase;":""}}
         .eyebrow.pill{background:var(--soft);padding:5px 13px;border-radius:999px}
         .eyebrow.line{padding-left:34px;position:relative}.eyebrow.line:before{content:"";position:absolute;left:0;top:50%;width:24px;height:2px;background:var(--accent)}
@@ -1267,7 +1272,7 @@
           <label>Button style <select id="pv-btn"><option value="solid">Solid</option><option value="grad">Gradient</option></select></label>
           <p class="ed-hint">Click any text to edit it. Click an image to replace it. Hover a section for move / duplicate / hide / delete controls. Changes auto-save and restore on reload.</p>
         </aside>
-        <div class="ed-modal ed-ui" id="ed-modal"><div class="ed-modal-in"><h4>Replace image</h4><input type="file" id="ed-file" accept="image/*"><div class="ed-or">— or paste an image URL —</div><input type="text" id="ed-url" placeholder="https://..."><div class="ed-modal-actions"><button class="ed-btn" id="ed-cancel">Cancel</button><button class="ed-btn primary" id="ed-url-go">Use URL</button></div></div></div>
+        <div class="ed-modal ed-ui" id="ed-modal"><div class="ed-modal-in"><h4 id="ed-modal-t">Replace image</h4><input type="file" id="ed-file" accept="image/*"><div class="ed-or">— or paste an image URL —</div><input type="text" id="ed-url" placeholder="https://..."><div class="ed-modal-actions"><button class="ed-btn" id="ed-bg-remove" style="margin-right:auto;display:none">Remove</button><button class="ed-btn" id="ed-cancel">Cancel</button><button class="ed-btn primary" id="ed-url-go">Use URL</button></div></div></div>
         <div class="ed-toast ed-ui" id="ed-toast"></div>
       `;
 
@@ -1292,9 +1297,8 @@
           var ch=FN.children;
           for(var i=0;i<ch.length;i++){var sec=ch[i]; if(sec.tagName!=='SECTION'&&sec.tagName!=='FOOTER')continue;
             sec.setAttribute('data-ed-sel','1'); if(getComputedStyle(sec).position==='static')sec.style.position='relative';
-            var isBg=sec.classList.contains('hero')||sec.classList.contains('finalcta');
             var bar=document.createElement('div'); bar.className='ed-secbar ed-ui';
-            bar.innerHTML='<button data-a="up" title="Move up">↑</button><button data-a="down" title="Move down">↓</button><button data-a="dup" title="Duplicate">⧉</button>'+(isBg?'<button data-a="bg" title="Replace background">▦</button>':'')+'<button data-a="hide" title="Hide / show">◐</button><button data-a="del" title="Delete">✕</button>';
+            bar.innerHTML='<button data-a="up" title="Move up">↑</button><button data-a="down" title="Move down">↓</button><button data-a="dup" title="Duplicate">⧉</button><button data-a="bg" title="Replace background image">▦</button><button data-a="hide" title="Hide / show">◐</button><button data-a="del" title="Delete">✕</button>';
             sec.appendChild(bar);
           }
         }
@@ -1321,12 +1325,14 @@
         },true);
         FN.addEventListener('focusin',function(e){if(editing&&e.target.isContentEditable)pushUndo();});
         FN.addEventListener('input',function(){if(editing)autosave();});
-        function openImg(t,m){imT=t;imM=m;$('#ed-url').value='';$('#ed-modal').classList.add('show');}
+        function openImg(t,m){imT=t;imM=m;$('#ed-url').value='';$('#ed-modal-t').textContent=(m==='bg'?'Replace section background':'Replace image');var rb=$('#ed-bg-remove');rb.style.display=(m==='bg')?'inline-block':'none';rb.textContent=(t.classList&&(t.classList.contains('ed-hasbg')||t.classList.contains('hero')||t.classList.contains('finalcta')))?'Remove background':'Remove';$('#ed-modal').classList.add('show');}
         function closeImg(){$('#ed-modal').classList.remove('show');imT=null;}
-        function useSrc(src){if(!imT)return;pushUndo();if(imM==='bg'){imT.style.setProperty('--heroimg','url('+src+')');imT.style.setProperty('--ctaimg','url('+src+')');}else{imT.src=src;}closeImg();autosave();flash('Image updated');}
+        function useSrc(src){if(!imT)return;pushUndo();if(imM==='bg'){var u='url("'+src+'")';if(imT.classList.contains('hero')||imT.classList.contains('finalcta')){imT.style.setProperty('--heroimg',u);imT.style.setProperty('--ctaimg',u);}else{imT.style.setProperty('--secbg',u);imT.classList.add('ed-hasbg');}}else{imT.src=src;}closeImg();autosave();flash('Background updated');}
+        function removeBg(){if(!imT)return;pushUndo();imT.classList.remove('ed-hasbg');imT.style.removeProperty('--secbg');imT.style.removeProperty('--heroimg');imT.style.removeProperty('--ctaimg');closeImg();autosave();flash('Background removed');}
         $('#ed-file').addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){useSrc(r.result);};r.readAsDataURL(f);});
         $('#ed-url-go').addEventListener('click',function(){var u=$('#ed-url').value.trim();if(u)useSrc(u);});
         $('#ed-cancel').addEventListener('click',closeImg);
+        $('#ed-bg-remove').addEventListener('click',removeBg);
         $('#ed-modal').addEventListener('click',function(e){if(e.target===this)closeImg();});
         $('#ed-edit').addEventListener('click',function(){setEdit(!editing);});
         $('#ed-undo').addEventListener('click',doUndo);
