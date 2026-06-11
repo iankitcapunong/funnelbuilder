@@ -1017,7 +1017,7 @@
         *{margin:0;padding:0;box-sizing:border-box}
         :root{--bg:${p.bg};--alt:${p.alt};--text:${p.text};--muted:${p.muted};--accent:${p.accent};--accent2:${p.accent2};--card:${p.card};--border:${p.border};--on:${p.onAccent};--soft:${p.soft};--tint:${p.tint};--ring:${p.ring};--glow:${p.glow};--icon:${p.icon};--r:${radius};--btnr:${btnRadius};--btnbg:${btnBg};--head:${headFont};--body:${bodyFont};--hw:${headWeight};--tr:${tracking};--icr:${iconShape};--pad:${pad}px;--cw:${cw}px;--sh:${shadowSoft}}
         html{scroll-behavior:smooth}
-        body{background:${p.bg};${motifBg}color:var(--text);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased}
+        body{background:var(--bg);${motifBg}color:var(--text);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased}
         img{max-width:100%;display:block}
         .container{max-width:var(--cw);margin:0 auto;padding:0 24px}
         .narrow{max-width:760px}.center{text-align:center}
@@ -1189,9 +1189,171 @@
         .copy-sm{font-size:13px;color:#79839a;width:100%;border-top:1px solid rgba(255,255,255,.08);padding-top:16px;margin-top:6px}
       `;
       const timerJS = state.sections.includes("Urgency") ? `<script>(function(){var e=${uHours}*3600,b=document.querySelectorAll('#countdown b');function t(){var h=Math.floor(e/3600),m=Math.floor(e%3600/60),s=e%60;if(b.length){b[0].textContent=String(h).padStart(2,'0');b[1].textContent=String(m).padStart(2,'0');b[2].textContent=String(s).padStart(2,'0')}e=e>0?e-1:${uHours}*3600}t();setInterval(t,1000)})();<\/script>` : "";
-      const fontParts = Array.from(new Set(["Inter:wght@400;500;600;700;800", headChoice.q, bodyChoice.q])).map(q=>"family="+q).join("&");
+      const EXTRA_FONTS=["Poppins:wght@500;600;700","Sora:wght@500;600;700","Manrope:wght@500;600;700","Playfair+Display:wght@500;600;700","DM+Serif+Display:wght@400","Space+Grotesk:wght@500;600;700","Outfit:wght@500;600;700"];
+      const fontParts = Array.from(new Set(["Inter:wght@400;500;600;700;800", headChoice.q, bodyChoice.q].concat(EXTRA_FONTS))).map(q=>"family="+q).join("&");
+      const fid = Math.random().toString(36).slice(2,9);
 
-      return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(brand)} — Funnel</title><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?${fontParts}&display=swap" rel="stylesheet"><style>${css}</style></head><body>${body}${timerJS}</body></html>`;
+      const editorCSS = `
+        .ed-ui{font-family:'Inter',system-ui,sans-serif;box-sizing:border-box}
+        .ed-bar{position:fixed;top:0;left:0;right:0;height:48px;z-index:99990;display:flex;align-items:center;gap:8px;padding:0 12px;background:rgba(15,15,20,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1)}
+        .ed-logo{color:#fff;font-weight:700;font-size:13.5px;margin-right:auto;letter-spacing:.02em}
+        .ed-btn{background:rgba(255,255,255,.08);color:#e8e8ef;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;line-height:1}
+        .ed-btn:hover{background:rgba(255,255,255,.18)}
+        .ed-btn.primary{background:#6c5ce7;border-color:#6c5ce7;color:#fff}
+        .ed-seg{display:flex;gap:2px;background:rgba(255,255,255,.08);border-radius:8px;padding:2px}
+        .ed-seg button{background:transparent;border:0;color:#cfcfe0;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:14px;line-height:1}
+        .ed-seg button.on{background:rgba(255,255,255,.2);color:#fff}
+        body.editing{padding-top:48px}
+        .ed-panel{position:fixed;top:48px;right:0;bottom:0;width:270px;z-index:99980;background:#15151c;border-left:1px solid rgba(255,255,255,.1);padding:18px;overflow:auto;transform:translateX(100%);transition:transform .25s;color:#e8e8ef}
+        .ed-panel.show{transform:none}
+        .ed-panel h4{color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin:0 0 14px}
+        .ed-panel label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:13px;color:#b9b9c6}
+        .ed-panel input[type=color]{width:42px;height:28px;border:none;background:none;padding:0;border-radius:6px;cursor:pointer}
+        .ed-panel select,.ed-panel input[type=text]{background:#0f0f14;border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:7px;padding:7px;font-size:13px;font-family:inherit;max-width:140px}
+        .ed-panel input[type=range]{width:132px}
+        .ed-hint{font-size:12px;color:#8a8a99;line-height:1.55;margin-top:6px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+        body.editing #funnel [data-ed-sel]{transition:outline .12s}
+        body.editing #funnel [data-ed-sel]:hover{outline:2px dashed rgba(108,92,231,.7);outline-offset:-2px}
+        .ed-secbar{position:absolute;top:10px;right:10px;z-index:60;display:none;gap:3px;background:rgba(15,15,20,.94);border:1px solid rgba(255,255,255,.16);border-radius:9px;padding:4px;box-shadow:0 8px 22px rgba(0,0,0,.4)}
+        body.editing [data-ed-sel]:hover>.ed-secbar{display:flex}
+        .ed-secbar button{background:transparent;border:0;color:#e8e8ef;cursor:pointer;font-size:13px;width:28px;height:28px;border-radius:6px;line-height:1}
+        .ed-secbar button:hover{background:rgba(255,255,255,.2)}
+        body.editing #funnel [contenteditable]:hover{outline:1px solid rgba(108,92,231,.45);outline-offset:2px;border-radius:3px}
+        body.editing #funnel [contenteditable]:focus{outline:2px solid #6c5ce7;outline-offset:2px;border-radius:3px}
+        body.editing #funnel img{cursor:pointer}
+        body.editing #funnel img:hover{outline:2px solid #6c5ce7;outline-offset:2px}
+        .ed-hidden{display:none}
+        body.editing .ed-hidden{display:block;opacity:.32;outline:2px dashed #888}
+        #funnel{transition:max-width .25s}
+        #funnel.is-tablet,#funnel.is-mobile{box-shadow:0 0 0 1px rgba(0,0,0,.12),0 30px 80px rgba(0,0,0,.22)}
+        #funnel.is-mobile .hero-grid,#funnel.is-mobile .ps,#funnel.is-mobile .auth,#funnel.is-mobile .bgrid,#funnel.is-mobile .steps,#funnel.is-mobile .stack-split,#funnel.is-mobile .tfeature,#funnel.is-mobile .sp-split{grid-template-columns:1fr!important;display:grid}
+        #funnel.is-mobile .hero-art{display:none}
+        #funnel.is-mobile .optin-form{flex-direction:column}
+        #funnel.is-tablet .bgrid.c4,#funnel.is-tablet .bgrid.c3{grid-template-columns:repeat(2,1fr)!important}
+        .ed-modal{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55)}
+        .ed-modal.show{display:flex}
+        .ed-modal-in{background:#15151c;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:22px;width:340px;color:#e8e8ef}
+        .ed-modal-in h4{margin:0 0 14px;color:#fff}
+        .ed-or{font-size:12px;color:#8a8a99;margin:12px 0 8px;text-align:center}
+        .ed-modal-in input[type=text]{width:100%;background:#0f0f14;border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:8px;padding:9px;font-size:13px}
+        .ed-modal-in input[type=file]{width:100%;font-size:13px;color:#cfcfe0}
+        .ed-modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+        .ed-toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);z-index:100000;background:#111;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;pointer-events:none;border:1px solid rgba(255,255,255,.16)}
+        .ed-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+        @media print{.ed-ui{display:none!important}body.editing{padding-top:0}}
+      `;
+
+      const editorUI = `
+        <div class="ed-bar ed-ui">
+          <span class="ed-logo">✦ Funnel Editor</span>
+          <button class="ed-btn" id="ed-edit">Preview</button>
+          <button class="ed-btn" id="ed-undo" title="Undo (Ctrl+Z)">↺</button>
+          <button class="ed-btn" id="ed-redo" title="Redo (Ctrl+Y)">↻</button>
+          <span class="ed-seg" id="ed-seg"><button data-d="desktop" class="on" title="Desktop">🖥</button><button data-d="tablet" title="Tablet">▭</button><button data-d="mobile" title="Mobile">▯</button></span>
+          <button class="ed-btn" id="ed-style">🎨 Style</button>
+          <button class="ed-btn" id="ed-save">Save</button>
+          <button class="ed-btn primary" id="ed-export">Export HTML</button>
+        </div>
+        <aside class="ed-panel ed-ui" id="ed-panel">
+          <h4>Design controls</h4>
+          <label>Accent color <input type="color" id="pv-accent"></label>
+          <label>Text color <input type="color" id="pv-text"></label>
+          <label>Background <input type="color" id="pv-bg"></label>
+          <label>Heading font <select id="pv-head"><option value="">Default</option><option value="'Inter',sans-serif">Inter</option><option value="'Poppins',sans-serif">Poppins</option><option value="'Sora',sans-serif">Sora</option><option value="'Manrope',sans-serif">Manrope</option><option value="'Space Grotesk',sans-serif">Space Grotesk</option><option value="'Outfit',sans-serif">Outfit</option><option value="'Playfair Display',serif">Playfair Display</option><option value="'DM Serif Display',serif">DM Serif</option></select></label>
+          <label>Body font <select id="pv-body"><option value="">Default</option><option value="'Inter',sans-serif">Inter</option><option value="'Manrope',sans-serif">Manrope</option><option value="'Poppins',sans-serif">Poppins</option><option value="'Sora',sans-serif">Sora</option></select></label>
+          <label>Corner radius <input type="range" id="pv-r" min="0" max="36" value="14"></label>
+          <label>Section spacing <input type="range" id="pv-pad" min="30" max="120" value="78"></label>
+          <label>Button style <select id="pv-btn"><option value="solid">Solid</option><option value="grad">Gradient</option></select></label>
+          <p class="ed-hint">Click any text to edit it. Click an image to replace it. Hover a section for move / duplicate / hide / delete controls. Changes auto-save and restore on reload.</p>
+        </aside>
+        <div class="ed-modal ed-ui" id="ed-modal"><div class="ed-modal-in"><h4>Replace image</h4><input type="file" id="ed-file" accept="image/*"><div class="ed-or">— or paste an image URL —</div><input type="text" id="ed-url" placeholder="https://..."><div class="ed-modal-actions"><button class="ed-btn" id="ed-cancel">Cancel</button><button class="ed-btn primary" id="ed-url-go">Use URL</button></div></div></div>
+        <div class="ed-toast ed-ui" id="ed-toast"></div>
+      `;
+
+      const editorJS = `<script>
+      (function(){
+        var FN=document.getElementById('funnel'); if(!FN) return;
+        var fid=(document.body.getAttribute('data-fid')||'x'), KEY='ezfunnel:'+fid;
+        var editing=false, undo=[], redo=[], st, imT=null, imM=null;
+        var EDS='h1,h2,h3,h4,p,span,a,li,summary,b,strong,em,blockquote,.bigprice,.price';
+        function $(s){return document.querySelector(s);}
+        function flash(t){var e=$('#ed-toast');e.textContent=t;e.classList.add('show');setTimeout(function(){e.classList.remove('show');},1400);}
+        function vars(){var s=document.documentElement.style,o={},ks=['--accent','--accent2','--text','--bg','--alt','--card','--head','--body','--r','--pad','--btnbg'];ks.forEach(function(k){var v=s.getPropertyValue(k);if(v)o[k]=v;});return o;}
+        function applyVars(o){for(var k in o)document.documentElement.style.setProperty(k,o[k]);}
+        function snap(){return {h:FN.innerHTML,v:vars()};}
+        function pushUndo(){undo.push(snap());if(undo.length>80)undo.shift();redo=[];}
+        function autosave(){clearTimeout(st);st=setTimeout(function(){try{localStorage.setItem(KEY,JSON.stringify(snap()));}catch(e){}},700);}
+        function save(){try{localStorage.setItem(KEY,JSON.stringify(snap()));flash('Saved');}catch(e){flash('Saved for this session');}}
+        function restore(){try{var d=JSON.parse(localStorage.getItem(KEY));if(d&&d.h){FN.innerHTML=d.h;if(d.v)applyVars(d.v);}}catch(e){}}
+        function clean(){var c=FN.cloneNode(true);c.querySelectorAll('.ed-secbar').forEach(function(e){e.remove();});c.querySelectorAll('.ed-hidden').forEach(function(e){e.remove();});c.querySelectorAll('[contenteditable]').forEach(function(e){e.removeAttribute('contenteditable');});c.querySelectorAll('[data-ed-sel]').forEach(function(e){e.removeAttribute('data-ed-sel');e.style.position='';});return c.innerHTML;}
+        function initSecs(){
+          FN.querySelectorAll('.ed-secbar').forEach(function(b){b.remove();});
+          var ch=FN.children;
+          for(var i=0;i<ch.length;i++){var sec=ch[i]; if(sec.tagName!=='SECTION'&&sec.tagName!=='FOOTER')continue;
+            sec.setAttribute('data-ed-sel','1'); if(getComputedStyle(sec).position==='static')sec.style.position='relative';
+            var isBg=sec.classList.contains('hero')||sec.classList.contains('finalcta');
+            var bar=document.createElement('div'); bar.className='ed-secbar ed-ui';
+            bar.innerHTML='<button data-a="up" title="Move up">↑</button><button data-a="down" title="Move down">↓</button><button data-a="dup" title="Duplicate">⧉</button>'+(isBg?'<button data-a="bg" title="Replace background">▦</button>':'')+'<button data-a="hide" title="Hide / show">◐</button><button data-a="del" title="Delete">✕</button>';
+            sec.appendChild(bar);
+          }
+        }
+        function bindEdit(){FN.querySelectorAll(EDS).forEach(function(el){if(el.closest('.ed-secbar'))return;if(el.children.length===0)el.setAttribute('contenteditable','true');});}
+        function unbindEdit(){FN.querySelectorAll('[contenteditable]').forEach(function(e){e.removeAttribute('contenteditable');});}
+        function setEdit(on){editing=on;document.body.classList.toggle('editing',on);$('#ed-edit').textContent=on?'Preview':'Edit';if(on){initSecs();bindEdit();}else{unbindEdit();}}
+        FN.addEventListener('click',function(e){
+          var b=e.target.closest('.ed-secbar button'); if(!b)return; e.preventDefault(); if(!editing)return;
+          var sec=b.closest('[data-ed-sel]'),a=b.getAttribute('data-a'); pushUndo();
+          if(a==='up'){var pv=sec.previousElementSibling;if(pv)FN.insertBefore(sec,pv);}
+          else if(a==='down'){var nx=sec.nextElementSibling;if(nx)FN.insertBefore(nx,sec);}
+          else if(a==='dup'){var c=sec.cloneNode(true);c.querySelectorAll('.ed-secbar').forEach(function(x){x.remove();});if(sec.nextSibling)FN.insertBefore(c,sec.nextSibling);else FN.appendChild(c);initSecs();bindEdit();}
+          else if(a==='del'){sec.remove();}
+          else if(a==='hide'){sec.classList.toggle('ed-hidden');}
+          else if(a==='bg'){openImg(sec,'bg');}
+          autosave();
+        });
+        FN.addEventListener('click',function(e){
+          if(!editing)return; if(e.target.closest('.ed-secbar'))return;
+          var im=e.target.closest('img'); if(im){e.preventDefault();e.stopPropagation();openImg(im,'img');return;}
+          var a=e.target.closest('a'); if(a)e.preventDefault();
+        },true);
+        FN.addEventListener('focusin',function(e){if(editing&&e.target.isContentEditable)pushUndo();});
+        FN.addEventListener('input',function(){if(editing)autosave();});
+        function openImg(t,m){imT=t;imM=m;$('#ed-url').value='';$('#ed-modal').classList.add('show');}
+        function closeImg(){$('#ed-modal').classList.remove('show');imT=null;}
+        function useSrc(src){if(!imT)return;pushUndo();if(imM==='bg'){imT.style.setProperty('--heroimg','url('+src+')');imT.style.setProperty('--ctaimg','url('+src+')');}else{imT.src=src;}closeImg();autosave();flash('Image updated');}
+        $('#ed-file').addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){useSrc(r.result);};r.readAsDataURL(f);});
+        $('#ed-url-go').addEventListener('click',function(){var u=$('#ed-url').value.trim();if(u)useSrc(u);});
+        $('#ed-cancel').addEventListener('click',closeImg);
+        $('#ed-modal').addEventListener('click',function(e){if(e.target===this)closeImg();});
+        $('#ed-edit').addEventListener('click',function(){setEdit(!editing);});
+        $('#ed-undo').addEventListener('click',doUndo);
+        $('#ed-redo').addEventListener('click',doRedo);
+        $('#ed-style').addEventListener('click',function(){$('#ed-panel').classList.toggle('show');});
+        $('#ed-save').addEventListener('click',save);
+        $('#ed-export').addEventListener('click',exportHTML);
+        var seg=$('#ed-seg');
+        seg.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;for(var i=0;i<seg.children.length;i++)seg.children[i].classList.remove('on');b.classList.add('on');device(b.getAttribute('data-d'));});
+        function device(d){FN.classList.remove('is-tablet','is-mobile');if(d==='tablet'){FN.classList.add('is-tablet');FN.style.maxWidth='820px';FN.style.margin='0 auto';}else if(d==='mobile'){FN.classList.add('is-mobile');FN.style.maxWidth='402px';FN.style.margin='0 auto';}else{FN.style.maxWidth='';FN.style.margin='';}}
+        function setVar(k,v){pushUndo();document.documentElement.style.setProperty(k,v);autosave();}
+        $('#pv-accent').addEventListener('input',function(){setVar('--accent',this.value);});
+        $('#pv-text').addEventListener('input',function(){setVar('--text',this.value);});
+        $('#pv-bg').addEventListener('input',function(){setVar('--bg',this.value);setVar('--alt',this.value);});
+        $('#pv-head').addEventListener('change',function(){if(this.value)setVar('--head',this.value);});
+        $('#pv-body').addEventListener('change',function(){if(this.value)setVar('--body',this.value);});
+        $('#pv-r').addEventListener('input',function(){setVar('--r',this.value+'px');});
+        $('#pv-pad').addEventListener('input',function(){setVar('--pad',this.value+'px');});
+        $('#pv-btn').addEventListener('change',function(){setVar('--btnbg',this.value==='grad'?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--accent)');});
+        function applySnap(s){FN.innerHTML=s.h;applyVars(s.v||{});if(editing){initSecs();bindEdit();}}
+        function doUndo(){if(!undo.length)return;redo.push(snap());applySnap(undo.pop());flash('Undo');}
+        function doRedo(){if(!redo.length)return;undo.push(snap());applySnap(redo.pop());flash('Redo');}
+        document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase();if((e.ctrlKey||e.metaKey)&&k==='z'){e.preventDefault();e.shiftKey?doRedo():doUndo();}else if((e.ctrlKey||e.metaKey)&&k==='y'){e.preventDefault();doRedo();}else if((e.ctrlKey||e.metaKey)&&k==='s'){e.preventDefault();save();}});
+        function dl(txt,name){var b=new Blob([txt],{type:'text/html'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},1500);}
+        function exportHTML(){var links='';document.querySelectorAll('head link').forEach(function(l){links+=l.outerHTML;});var base=document.getElementById('ed-base').innerHTML;var ov=':root{',v=vars();for(var k in v)ov+=k+':'+v[k]+';';ov+='}';var doc='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+links+'<style>'+base+'</style><style>'+ov+'</style></head><body><div id="funnel">'+clean()+'</div></body></html>';dl(doc,'funnel.html');flash('Exported HTML');}
+        restore(); setEdit(true);
+      })();
+      <\/script>`;
+
+      return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(brand)} — Funnel</title><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?${fontParts}&display=swap" rel="stylesheet"><style id="ed-base">${css}</style><style id="ed-css">${editorCSS}</style></head><body data-fid="${fid}"><div id="funnel">${body}</div>${editorUI}${timerJS}${editorJS}</body></html>`;
     }
 
     /* ---- overlay wiring ---- */
