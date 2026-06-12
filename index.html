@@ -186,43 +186,45 @@
     .copy.ghost.done{background:linear-gradient(135deg,#34d399,#10b981);color:#fff;border-color:transparent}
     .hint{text-align:center;font-size:12px;color:var(--text-dim);margin-top:12px}
 
-    /* ---------- funnel layout wireframe preview ---------- */
-    .layoutprev{--wa:var(--accent);--wa2:var(--gold);padding:18px;max-height:56vh;overflow-y:auto;
-      display:flex;flex-direction:column;gap:11px;background:
-      radial-gradient(520px 300px at 10% -10%,var(--accent-soft),transparent 70%),var(--surface)}
+    /* ---------- funnel layout skeleton preview ---------- */
+    /* neutral grayscale wireframe with a soft shimmer sweep — reads as a page skeleton */
+    .layoutprev{--sk:#e9efeb;--sk2:#dde7e1;--skd:#cfdbd4;padding:18px;max-height:56vh;overflow-y:auto;
+      display:flex;flex-direction:column;gap:12px;background:var(--surface)}
     .layoutprev::-webkit-scrollbar{width:8px}
     .layoutprev::-webkit-scrollbar-thumb{background:var(--border-hover);border-radius:8px}
     .lp-empty{color:var(--text-dim);font-size:13px;text-align:center;padding:46px 20px}
-    .wf{position:relative;border:1px solid var(--border);border-radius:13px;background:var(--surface-raised);
-      padding:15px 14px 14px;overflow:hidden;transition:.16s;animation:wfIn .35s cubic-bezier(.16,1,.3,1) both}
-    .wf:hover{border-color:var(--border-hover);box-shadow:0 6px 18px rgba(29,122,84,.07)}
+    .wf{position:relative;border:1px solid var(--border);border-radius:13px;background:#fbfdfc;
+      padding:16px 15px;overflow:hidden;transition:.16s;animation:wfIn .35s cubic-bezier(.16,1,.3,1) both}
+    .wf:hover{border-color:var(--border-hover)}
     @keyframes wfIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-    .wf.dark{background:#12211a;border-color:#21372c}
-    .wf-tag{position:absolute;top:9px;right:10px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-      color:var(--text-dim);background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:2px 7px}
-    .wf.dark .wf-tag{color:#9fc4b2;background:#16291f;border-color:#27412f}
-    .wf-num{position:absolute;top:9px;left:10px;width:17px;height:17px;border-radius:5px;display:grid;place-items:center;
-      font-size:9px;font-weight:700;color:var(--wa);background:rgba(29,122,84,.12);border:1px solid rgba(29,122,84,.28)}
-    .wf-bar{height:7px;border-radius:5px;background:var(--border-hover)}
-    .wf.dark .wf-bar{background:#2c4838}
-    .wf-bar.h{height:11px;background:linear-gradient(90deg,var(--wa),var(--wa2));opacity:.92}
-    .wf-bar.sm{height:5px;opacity:.7}
-    .wf-btn{height:18px;border-radius:6px;background:var(--wa);box-shadow:0 3px 8px rgba(29,122,84,.22)}
-    .wf-btn.outline{background:transparent;border:1.5px solid var(--wa)}
-    .wf-box{background:var(--surface-hover);border:1px dashed var(--border-hover);border-radius:9px;display:grid;place-items:center;color:var(--text-dim)}
-    .wf.dark .wf-box{background:#193027;border-color:#2c4838}
-    .wf-box svg{width:20px;height:20px;opacity:.55}
-    .wf-pill{height:13px;border-radius:999px;background:var(--surface-hover);border:1px solid var(--border)}
-    .wf-dot{width:18px;height:18px;border-radius:50%;background:rgba(29,122,84,.14);border:1px solid var(--wa);flex:none}
-    .wf-seal{width:38px;height:38px;border-radius:50%;background:var(--wa);flex:none;box-shadow:0 4px 10px rgba(29,122,84,.25)}
+    .wf-tag{position:absolute;top:10px;right:11px;font-size:8.5px;font-weight:650;letter-spacing:.07em;text-transform:uppercase;
+      color:var(--text-dim);background:var(--surface-raised);border:1px solid var(--border);border-radius:5px;padding:2px 6px;z-index:2}
+    .wf-num{position:absolute;top:10px;left:11px;width:16px;height:16px;border-radius:5px;display:grid;place-items:center;
+      font-size:8.5px;font-weight:700;color:var(--text-dim);background:var(--surface-raised);border:1px solid var(--border);z-index:2}
+    /* every skeleton shape shimmers */
+    .wf-bar,.wf-btn,.wf-box,.wf-pill,.wf-dot,.wf-seal{
+      background-image:linear-gradient(100deg,var(--sk) 28%,#f3f8f5 46%,var(--sk) 64%);
+      background-size:240% 100%;animation:wfShim 1.8s linear infinite}
+    @keyframes wfShim{0%{background-position:200% 0}100%{background-position:-140% 0}}
+    .wf-bar{height:7px;border-radius:4px}
+    .wf-bar.h{height:12px;border-radius:5px;background-image:linear-gradient(100deg,var(--skd) 28%,#e3ede7 46%,var(--skd) 64%)}
+    .wf-bar.sm{height:5px;opacity:.85}
+    .wf-btn{height:18px;border-radius:6px;background-image:linear-gradient(100deg,var(--sk2) 28%,#eef4f0 46%,var(--sk2) 64%)}
+    .wf-btn.outline{background:transparent;background-image:none;border:1.5px solid var(--sk2);animation:none}
+    .wf-box{border-radius:9px;display:grid;place-items:center;color:var(--text-dim);min-height:46px}
+    .wf-box svg{width:20px;height:20px;opacity:.5;position:relative}
+    .wf-pill{height:13px;border-radius:999px}
+    .wf-dot{width:18px;height:18px;border-radius:50%;flex:none}
+    .wf-seal{width:38px;height:38px;border-radius:50%;flex:none}
     .wf-row{display:flex;gap:9px;align-items:center}
     .wf-col{display:flex;flex-direction:column;gap:7px;min-width:0}
     .wf-grid{display:grid;gap:8px}
     .wf-card{border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:9px;display:flex;flex-direction:column;gap:6px}
-    .wf.dark .wf-card{background:#16291f;border-color:#27412f}
-    .wf-card.hl{border-color:var(--wa);box-shadow:0 0 0 2px rgba(29,122,84,.16)}
+    .wf-card.hl{border-color:var(--border-hover);box-shadow:0 0 0 2px var(--surface-raised)}
     .wf-center{align-items:center;text-align:center}
-    .wf-star{color:var(--gold);font-size:9px;letter-spacing:1px}
+    .wf-star{display:flex;gap:3px}
+    .wf-star::before{content:"";width:34px;height:6px;border-radius:4px;
+      background-image:linear-gradient(100deg,var(--sk) 28%,#f3f8f5 46%,var(--sk) 64%);background-size:240% 100%;animation:wfShim 1.8s linear infinite}
 
     /* ---------- funnel preview overlay ---------- */
     .overlay{position:fixed;inset:0;z-index:90;display:none;background:rgba(8,8,11,.82);
@@ -712,7 +714,7 @@
         [0,1,2,3].map(()=> '<div class="wf-row" style="justify-content:space-between"><div class="wf-row" style="flex:1">'+_bar('14px','sm')+_bar('60%','sm')+'</div>'+_bar('34px','sm')+'</div>').join('')+
         '<div class="wf-col wf-center" style="margin-top:8px">'+_bar('30%','h')+'<div class="wf-btn" style="width:110px;margin-top:5px"></div></div>',
       "Testimonials":()=>'<div class="wf-col wf-center" style="margin-bottom:9px">'+_bar('46%','h')+'</div>'+
-        '<div class="wf-grid" style="grid-template-columns:repeat(3,1fr)">'+[0,1,2].map(()=>'<div class="wf-card"><div class="wf-star">★★★★★</div>'+_bar('100%','sm')+_bar('80%','sm')+'<div class="wf-row" style="margin-top:3px"><div class="wf-dot" style="width:14px;height:14px"></div>'+_bar('40%','sm')+'</div></div>').join('')+'</div>',
+        '<div class="wf-grid" style="grid-template-columns:repeat(3,1fr)">'+[0,1,2].map(()=>'<div class="wf-card"><div class="wf-star"></div>'+_bar('100%','sm')+_bar('80%','sm')+'<div class="wf-row" style="margin-top:3px"><div class="wf-dot" style="width:14px;height:14px"></div>'+_bar('40%','sm')+'</div></div>').join('')+'</div>',
       "Authority":()=>'<div class="wf-row" style="align-items:stretch">'+
         '<div class="wf-box" style="width:34%;min-height:74px">'+_imgIco+'</div>'+
         '<div class="wf-col" style="flex:1">'+_bar('50%','h')+_bar('30%','sm')+_bar('100%')+_bar('88%')+
@@ -730,24 +732,17 @@
       "Final CTA":()=>'<div class="wf-col wf-center">'+_bar('60%','h')+_bar('80%','sm')+'<div class="wf-btn" style="width:120px;margin-top:4px"></div></div>',
       "Footer":()=>'<div class="wf-row" style="justify-content:space-between">'+_bar('70px','sm')+'<div class="wf-row" style="gap:12px">'+_bar('30px','sm')+_bar('30px','sm')+_bar('30px','sm')+'</div></div>'
     };
-    const DARK_SEC = {"Hero Offer":1,"Final CTA":1,"Footer":1,"Urgency":1};
 
     function buildLayoutPreview(){
       if(!state.sections.length){
         layoutEl.innerHTML='<div class="lp-empty">Add sections in step 4 to see your funnel layout take shape here.</div>';
         return;
       }
-      const pal = state.vibe==="custom"
-        ? {accent:state.custom.accent, accent2:state.custom.accent2}
-        : (PALETTES[state.vibe] || {greengold:{accent:"#1d7a54",accent2:"#c39a3c"}}[state.vibe] || PALETTES.bold);
-      layoutEl.style.setProperty("--wa", pal.accent);
-      layoutEl.style.setProperty("--wa2", pal.accent2 || pal.accent);
       layoutEl.innerHTML = state.sections.map((k,i)=>{
         const fn = WF[k] || (()=> _bar('60%','h')+_bar('100%','sm'));
-        const dark = DARK_SEC[k] ? " dark" : "";
-        return '<div class="wf'+dark+'" style="animation-delay:'+(i*28)+'ms">'+
+        return '<div class="wf" style="animation-delay:'+(i*28)+'ms">'+
           '<span class="wf-num">'+(i+1)+'</span><span class="wf-tag">'+k+'</span>'+
-          '<div style="margin-top:6px">'+fn()+'</div></div>';
+          '<div style="margin-top:8px">'+fn()+'</div></div>';
       }).join("");
     }
 
