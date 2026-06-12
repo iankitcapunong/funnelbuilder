@@ -186,45 +186,55 @@
     .copy.ghost.done{background:linear-gradient(135deg,#34d399,#10b981);color:#fff;border-color:transparent}
     .hint{text-align:center;font-size:12px;color:var(--text-dim);margin-top:12px}
 
-    /* ---------- funnel layout skeleton preview ---------- */
-    /* neutral grayscale wireframe with a soft shimmer sweep — reads as a page skeleton */
-    .layoutprev{--sk:#e9efeb;--sk2:#dde7e1;--skd:#cfdbd4;padding:18px;max-height:56vh;overflow-y:auto;
-      display:flex;flex-direction:column;gap:12px;background:var(--surface)}
+    /* ---------- funnel layout mini-preview (real styled blocks) ---------- */
+    .layoutprev{padding:16px;max-height:56vh;overflow-y:auto;background:var(--surface)}
     .layoutprev::-webkit-scrollbar{width:8px}
     .layoutprev::-webkit-scrollbar-thumb{background:var(--border-hover);border-radius:8px}
     .lp-empty{color:var(--text-dim);font-size:13px;text-align:center;padding:46px 20px}
-    .wf{position:relative;border:1px solid var(--border);border-radius:13px;background:#fbfdfc;
-      padding:16px 15px;overflow:hidden;transition:.16s;animation:wfIn .35s cubic-bezier(.16,1,.3,1) both}
-    .wf:hover{border-color:var(--border-hover)}
+    .lay{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--lbg);color:var(--ltext);
+      box-shadow:0 12px 32px rgba(15,40,30,.1);font-family:'Inter',system-ui,sans-serif;
+      animation:wfIn .4s cubic-bezier(.16,1,.3,1) both}
     @keyframes wfIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-    .wf-tag{position:absolute;top:10px;right:11px;font-size:8.5px;font-weight:650;letter-spacing:.07em;text-transform:uppercase;
-      color:var(--text-dim);background:var(--surface-raised);border:1px solid var(--border);border-radius:5px;padding:2px 6px;z-index:2}
-    .wf-num{position:absolute;top:10px;left:11px;width:16px;height:16px;border-radius:5px;display:grid;place-items:center;
-      font-size:8.5px;font-weight:700;color:var(--text-dim);background:var(--surface-raised);border:1px solid var(--border);z-index:2}
-    /* every skeleton shape shimmers */
-    .wf-bar,.wf-btn,.wf-box,.wf-pill,.wf-dot,.wf-seal{
-      background-image:linear-gradient(100deg,var(--sk) 28%,#f3f8f5 46%,var(--sk) 64%);
-      background-size:240% 100%;animation:wfShim 1.8s linear infinite}
-    @keyframes wfShim{0%{background-position:200% 0}100%{background-position:-140% 0}}
-    .wf-bar{height:7px;border-radius:4px}
-    .wf-bar.h{height:12px;border-radius:5px;background-image:linear-gradient(100deg,var(--skd) 28%,#e3ede7 46%,var(--skd) 64%)}
-    .wf-bar.sm{height:5px;opacity:.85}
-    .wf-btn{height:18px;border-radius:6px;background-image:linear-gradient(100deg,var(--sk2) 28%,#eef4f0 46%,var(--sk2) 64%)}
-    .wf-btn.outline{background:transparent;background-image:none;border:1.5px solid var(--sk2);animation:none}
-    .wf-box{border-radius:9px;display:grid;place-items:center;color:var(--text-dim);min-height:46px}
-    .wf-box svg{width:20px;height:20px;opacity:.5;position:relative}
-    .wf-pill{height:13px;border-radius:999px}
-    .wf-dot{width:18px;height:18px;border-radius:50%;flex:none}
-    .wf-seal{width:38px;height:38px;border-radius:50%;flex:none}
-    .wf-row{display:flex;gap:9px;align-items:center}
-    .wf-col{display:flex;flex-direction:column;gap:7px;min-width:0}
-    .wf-grid{display:grid;gap:8px}
-    .wf-card{border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:9px;display:flex;flex-direction:column;gap:6px}
-    .wf-card.hl{border-color:var(--border-hover);box-shadow:0 0 0 2px var(--surface-raised)}
-    .wf-center{align-items:center;text-align:center}
-    .wf-star{display:flex;gap:3px}
-    .wf-star::before{content:"";width:34px;height:6px;border-radius:4px;
-      background-image:linear-gradient(100deg,var(--sk) 28%,#f3f8f5 46%,var(--sk) 64%);background-size:240% 100%;animation:wfShim 1.8s linear infinite}
+    .lay-sec{position:relative;padding:15px 14px;border-bottom:1px solid var(--lborder)}
+    .lay-sec:last-child{border-bottom:none}
+    .lay-sec.alt{background:var(--lalt)}
+    .lay-tag{position:absolute;top:4px;right:6px;font-size:6.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+      color:var(--lmuted);opacity:.5;pointer-events:none;z-index:2}
+    .lay-ey{display:inline-block;font-size:7px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--lacc);margin-bottom:4px}
+    .lay-h{font-size:15px;font-weight:800;line-height:1.13;letter-spacing:-.02em;margin-bottom:4px;color:var(--ltext)}
+    .lay-h.sm{font-size:11px}
+    .lay-h.xs{font-size:8.5px;font-weight:700;margin:0}
+    .lay-p{font-size:7.5px;line-height:1.5;color:var(--lmuted);margin-bottom:6px}
+    .lay-center{text-align:center}
+    .lay-btn{display:inline-block;font-size:7.5px;font-weight:700;color:var(--lon);background:var(--lacc);padding:5px 12px;border-radius:7px;white-space:nowrap}
+    .lay-btn.out{background:transparent;color:var(--lacc);border:1px solid var(--lacc)}
+    .lay-img{background:linear-gradient(135deg,var(--lacc),var(--lacc2));border-radius:8px;opacity:.92}
+    .lay-card{background:var(--lcard);border:1px solid var(--lborder);border-radius:8px;padding:9px}
+    .lay-card.hl{outline:1.5px solid var(--lacc);outline-offset:-1px}
+    .lay-grid{display:grid;gap:7px}
+    .lay-row{display:flex;gap:8px}
+    .lay-dot{width:18px;height:18px;border-radius:6px;background:var(--lsoft);display:grid;place-items:center;color:var(--lacc);font-size:9px;margin-bottom:4px}
+    .lay-num{width:20px;height:20px;border-radius:50%;background:var(--lacc);color:var(--lon);display:inline-grid;place-items:center;font-size:9px;font-weight:800;margin:0 auto}
+    .lay-av{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--lacc),var(--lacc2));flex:none}
+    .lay-stars{color:#f6b51e;font-size:7px;letter-spacing:.5px}
+    .lay-li{font-size:7.5px;color:var(--ltext);margin:2px 0;padding-left:9px;position:relative;line-height:1.4}
+    .lay-li:before{content:"✓";position:absolute;left:0;color:var(--lacc);font-weight:800}
+    .lay-price{font-size:17px;font-weight:800;color:var(--lacc);line-height:1;margin-bottom:5px}
+    .lay-seal{width:30px;height:30px;border-radius:50%;background:var(--lacc);color:var(--lon);display:grid;place-items:center;
+      font-size:7px;font-weight:800;line-height:1.05;flex:none;text-align:center}
+    .lay-pill{display:inline-block;font-size:6px;font-weight:800;padding:2px 6px;border-radius:999px;background:var(--lsoft);color:var(--lacc);margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em}
+    .lay-timer{display:flex;gap:5px;justify-content:center;margin:5px 0 7px}
+    .lay-timer>div{background:var(--lcard);border:1px solid var(--lborder);border-radius:6px;padding:4px 7px;font-size:13px;font-weight:800;color:var(--lacc);line-height:1;text-align:center}
+    .lay-unit{font-size:5.5px;font-weight:600;color:var(--lmuted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+    .lay-input{flex:1;background:var(--lcard);border:1px solid var(--lborder);border-radius:7px;height:20px}
+    .lay-faq{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--lcard);border:1px solid var(--lborder);border-radius:6px;padding:6px 8px;margin-bottom:5px}
+    /* hero / final-cta / footer get their own backgrounds */
+    .lay-hero{background:var(--lhero);color:#fff}
+    .lay-hero .lay-h,.lay-hero .lay-h.xs{color:#fff}
+    .lay-hero .lay-p{color:rgba(255,255,255,.85)}
+    .lay-hero .lay-ey{color:rgba(255,255,255,.92)}
+    .lay-hero .lay-img{border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.14)}
+    .lay-foot{background:#0c0e14;color:rgba(255,255,255,.65);border-bottom:none}
 
     /* ---------- funnel preview overlay ---------- */
     .overlay{position:fixed;inset:0;z-index:90;display:none;background:rgba(8,8,11,.82);
@@ -690,47 +700,66 @@
 
     const promptEl=$("#prompt"), wcEl=$("#wc"), layoutEl=$("#layoutPrev"), outTitle=$("#outTitle");
 
-    /* ---- live wireframe of the funnel layout (built from the chosen sections) ---- */
-    const _bar=(w,cls)=>'<div class="wf-bar '+(cls||'')+'" style="width:'+w+'"></div>';
-    const _imgIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>';
-    const _playIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg>';
-    function _cards(n,extra){let h='<div class="wf-grid" style="grid-template-columns:repeat('+n+',1fr)">';for(let i=0;i<n;i++)h+='<div class="wf-card'+(extra&&extra(i)?' '+extra(i):'')+'">'+_bar('70%','sm')+_bar('100%','sm')+_bar('85%','sm')+'</div>';return h+'</div>';}
+    /* ---- live MINIATURE LAYOUT of the funnel (real styled blocks, not a wireframe) ---- */
+    const _e = s => String(s==null?"":s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+    function layPalette(){
+      if(state.vibe==="custom"){
+        const a=state.custom.accent, a2=state.custom.accent2, dark=state.custom.base==="dark";
+        return {bg:dark?"#0f1512":"#ffffff",alt:dark?"#161e19":"#f5f8f6",text:dark?"#eef5f0":"#15281f",
+          muted:dark?"#9fb2a8":"#5d6e64",accent:a,accent2:a2,card:dark?"#17211c":"#ffffff",
+          border:dark?"#26332b":"#e7efe9",on:"#ffffff"};
+      }
+      if(state.vibe==="greengold")
+        return {bg:"#0f1713",alt:"#16221b",text:"#eef5f0",muted:"#a7bcb0",accent:"#1d7a54",accent2:"#d8b04f",card:"#16221b",border:"#26352c",on:"#ffffff"};
+      const p=PALETTES[state.vibe]||PALETTES.bold;
+      return {bg:p.bg,alt:p.alt,text:p.text,muted:p.muted,accent:p.accent,accent2:p.accent2,card:p.card,border:p.border,on:p.onAccent};
+    }
+    const layImg = h => '<div class="lay-img" style="min-height:'+h+'px"></div>';
+    const layEy  = t => '<span class="lay-ey">'+_e(t)+'</span>';
 
-    const WF = {
-      "Hero Offer":()=>'<div class="wf-row" style="justify-content:space-between">'+_bar('60px','sm')+'<div class="wf-btn" style="width:48px;height:14px"></div></div>'+
-        '<div class="wf-row" style="margin-top:11px;align-items:stretch">'+
-        '<div class="wf-col" style="flex:1.1">'+_bar('85%','h')+_bar('100%')+_bar('72%')+'<div class="wf-btn" style="width:96px;margin-top:5px"></div></div>'+
-        '<div class="wf-box" style="flex:.9;min-height:78px">'+_imgIco+'</div></div>',
-      "Problem":()=>'<div class="wf-row" style="align-items:stretch">'+
-        '<div class="wf-box" style="width:38%;min-height:70px">'+_imgIco+'</div>'+
-        '<div class="wf-col" style="flex:1">'+_bar('55%','h')+_bar('100%')+_bar('92%')+_bar('80%')+'</div></div>',
-      "Social Proof":()=>'<div class="wf-col wf-center">'+_bar('40%','sm')+
-        '<div class="wf-row" style="justify-content:center;margin:3px 0">'+_bar('46px','sm')+_bar('46px','sm')+_bar('46px','sm')+_bar('46px','sm')+_bar('46px','sm')+'</div>'+
-        '<div class="wf-row" style="justify-content:center;gap:22px">'+_bar('30px','h')+_bar('30px','h')+_bar('30px','h')+'</div></div>',
-      "Benefits":()=>'<div class="wf-col wf-center" style="margin-bottom:9px">'+_bar('44%','h')+'</div>'+_cards(3),
-      "How It Works":()=>'<div class="wf-col wf-center" style="margin-bottom:9px">'+_bar('40%','h')+'</div>'+
-        '<div class="wf-row" style="justify-content:space-between">'+[0,1,2].map(i=>'<div class="wf-col wf-center" style="flex:1"><div class="wf-dot"></div>'+_bar('70%','sm')+_bar('90%','sm')+'</div>').join('')+'</div>',
-      "Offer Stack":()=>'<div class="wf-col wf-center" style="margin-bottom:8px">'+_bar('50%','h')+'</div>'+
-        [0,1,2,3].map(()=> '<div class="wf-row" style="justify-content:space-between"><div class="wf-row" style="flex:1">'+_bar('14px','sm')+_bar('60%','sm')+'</div>'+_bar('34px','sm')+'</div>').join('')+
-        '<div class="wf-col wf-center" style="margin-top:8px">'+_bar('30%','h')+'<div class="wf-btn" style="width:110px;margin-top:5px"></div></div>',
-      "Testimonials":()=>'<div class="wf-col wf-center" style="margin-bottom:9px">'+_bar('46%','h')+'</div>'+
-        '<div class="wf-grid" style="grid-template-columns:repeat(3,1fr)">'+[0,1,2].map(()=>'<div class="wf-card"><div class="wf-star"></div>'+_bar('100%','sm')+_bar('80%','sm')+'<div class="wf-row" style="margin-top:3px"><div class="wf-dot" style="width:14px;height:14px"></div>'+_bar('40%','sm')+'</div></div>').join('')+'</div>',
-      "Authority":()=>'<div class="wf-row" style="align-items:stretch">'+
-        '<div class="wf-box" style="width:34%;min-height:74px">'+_imgIco+'</div>'+
-        '<div class="wf-col" style="flex:1">'+_bar('50%','h')+_bar('30%','sm')+_bar('100%')+_bar('88%')+
-        '<div class="wf-row" style="gap:18px;margin-top:3px">'+_bar('26px','h')+_bar('26px','h')+_bar('26px','h')+'</div></div></div>',
-      "Pricing":()=>'<div class="wf-col wf-center" style="margin-bottom:9px">'+_bar('40%','h')+'</div>'+
-        '<div class="wf-grid" style="grid-template-columns:repeat(3,1fr);align-items:start">'+[0,1,2].map(i=>'<div class="wf-card wf-center'+(i===1?' hl':'')+'">'+_bar('50%','sm')+_bar('60%','h')+_bar('90%','sm')+_bar('90%','sm')+'<div class="wf-btn'+(i===1?'':' outline')+'" style="width:100%;margin-top:3px"></div></div>').join('')+'</div>',
-      "Guarantee":()=>'<div class="wf-row"><div class="wf-seal"></div><div class="wf-col" style="flex:1">'+_bar('45%','h')+_bar('100%','sm')+_bar('80%','sm')+'</div></div>',
-      "Urgency":()=>'<div class="wf-col wf-center">'+_bar('38%','sm')+
-        '<div class="wf-row" style="justify-content:center;margin:4px 0">'+[0,1,2].map(()=>'<div class="wf-box" style="width:40px;height:32px"></div>').join('')+'</div>'+
-        '<div class="wf-btn" style="width:120px"></div></div>',
-      "FAQ":()=>'<div class="wf-col wf-center" style="margin-bottom:8px">'+_bar('40%','h')+'</div>'+
-        [0,1,2,3].map(()=>'<div class="wf-row" style="justify-content:space-between;border:1px solid var(--border);border-radius:7px;padding:7px 9px"><div style="flex:1">'+_bar('60%','sm')+'</div><span style="color:var(--wa);font-weight:700">+</span></div>').join(''),
-      "Lead Capture":()=>'<div class="wf-col wf-center">'+_bar('50%','h')+_bar('70%','sm')+
-        '<div class="wf-row" style="width:80%;margin-top:4px"><div class="wf-pill" style="flex:1;height:18px"></div><div class="wf-btn" style="width:70px"></div></div></div>',
-      "Final CTA":()=>'<div class="wf-col wf-center">'+_bar('60%','h')+_bar('80%','sm')+'<div class="wf-btn" style="width:120px;margin-top:4px"></div></div>',
-      "Footer":()=>'<div class="wf-row" style="justify-content:space-between">'+_bar('70px','sm')+'<div class="wf-row" style="gap:12px">'+_bar('30px','sm')+_bar('30px','sm')+_bar('30px','sm')+'</div></div>'
+    const LAY = {
+      "Hero Offer":(c)=>'<div class="lay-row" style="justify-content:space-between;align-items:center;margin-bottom:9px"><div class="lay-h xs">'+_e(c.brand)+'</div><span class="lay-btn" style="padding:3px 8px">'+_e(c.cta)+'</span></div>'+
+        '<div class="lay-row" style="align-items:center;gap:11px"><div style="flex:1.1">'+layEy(c.niche||"Proven system")+
+        '<div class="lay-h">Grow '+_e(c.N)+' with a funnel that sells</div>'+
+        '<div class="lay-p">A high-converting page engineered around one goal — getting more people to say yes.</div>'+
+        '<span class="lay-btn">'+_e(c.cta)+'</span></div><div style="flex:.85">'+layImg(56)+'</div></div>',
+      "Problem":(c)=>'<div class="lay-row" style="align-items:center;gap:11px"><div style="flex:.8">'+layImg(58)+'</div>'+
+        '<div style="flex:1.1">'+layEy("The problem")+'<div class="lay-h sm">Sound familiar?</div>'+
+        '<div class="lay-li" style="color:#ef4444;font-weight:600">✕ Traffic that barely converts</div>'+
+        '<div class="lay-li" style="color:#ef4444;font-weight:600">✕ Leads slipping through the cracks</div>'+
+        '<div class="lay-li" style="color:#ef4444;font-weight:600">✕ Guessing what makes people buy</div></div></div>',
+      "Social Proof":(c)=>'<div class="lay-center"><div class="lay-p" style="margin-bottom:6px">Trusted by 1,200+ '+_e((c.niche||"founders").toLowerCase())+'</div>'+
+        '<div class="lay-row" style="justify-content:center;gap:12px;opacity:.6;margin-bottom:7px">'+["Forbes","Inc.","TechCrunch","Bloomberg"].map(x=>'<span class="lay-h xs">'+x+'</span>').join("")+'</div>'+
+        '<div class="lay-row" style="justify-content:center;gap:26px">'+[["2.4x","conversions"],["1,200+","customers"],["4.9/5","rating"]].map(m=>'<div><div class="lay-price" style="font-size:13px">'+m[0]+'</div><div class="lay-p" style="margin:0">'+m[1]+'</div></div>').join("")+'</div></div>',
+      "Benefits":(c)=>'<div class="lay-center" style="margin-bottom:9px">'+layEy("What you get")+'<div class="lay-h sm">Everything you need to convert</div></div>'+
+        '<div class="lay-grid" style="grid-template-columns:repeat(3,1fr)">'+[["✦","More leads"],["⚡","Higher conversions"],["★","Proven to sell"]].map(b=>'<div class="lay-card"><div class="lay-dot">'+b[0]+'</div><div class="lay-h xs">'+b[1]+'</div><div class="lay-p" style="margin:0">Drive the outcome customers want.</div></div>').join("")+'</div>',
+      "How It Works":(c)=>'<div class="lay-center" style="margin-bottom:9px">'+layEy("How it works")+'<div class="lay-h sm">Live in three simple steps</div></div>'+
+        '<div class="lay-row" style="gap:9px">'+[["1","Pick your funnel"],["2","Add your message"],["3","Launch & convert"]].map(s=>'<div class="lay-center" style="flex:1"><div class="lay-num">'+s[0]+'</div><div class="lay-h xs" style="margin-top:4px">'+s[1]+'</div></div>').join("")+'</div>',
+      "Offer Stack":(c)=>'<div class="lay-center" style="margin-bottom:7px">'+layEy("Here’s the deal")+'<div class="lay-h sm">Everything you get</div></div>'+
+        '<div class="lay-card">'+[["Complete Funnel Template","$497"],["Copy Framework","$297"],["Email Sequence","$197"],["1:1 Onboarding Call","$250"]].map(r=>'<div class="lay-row" style="justify-content:space-between;padding:3px 0"><div class="lay-li" style="margin:0">'+r[0]+'</div><div class="lay-p" style="margin:0;font-weight:700">'+r[1]+'</div></div>').join("")+'</div>'+
+        '<div class="lay-center" style="margin-top:7px"><div class="lay-price">'+_e(c.price)+'</div><span class="lay-btn">'+_e(c.cta)+'</span></div>',
+      "Testimonials":(c)=>'<div class="lay-center" style="margin-bottom:9px">'+layEy("Real results")+'<div class="lay-h sm">Loved by people like you</div></div>'+
+        '<div class="lay-grid" style="grid-template-columns:repeat(3,1fr)">'+[0,1,2].map(()=>'<div class="lay-card"><div class="lay-stars">★★★★★</div><div class="lay-p" style="margin:5px 0;color:var(--ltext)">“This paid for itself in the first week.”</div><div class="lay-row" style="align-items:center;gap:5px"><div class="lay-av"></div><div class="lay-h xs">Sarah M.</div></div></div>').join("")+'</div>',
+      "Authority":(c)=>'<div class="lay-row" style="align-items:center;gap:11px"><div style="flex:.7">'+layImg(64)+'</div>'+
+        '<div style="flex:1.2">'+layEy("Meet your host")+'<div class="lay-h sm">Alex Carter</div>'+
+        '<div class="lay-p" style="color:var(--lacc);font-weight:700;margin-bottom:4px">Founder &amp; Head Coach</div>'+
+        '<div class="lay-p">A decade helping '+_e((c.niche||"founders").toLowerCase())+' turn attention into income.</div>'+
+        '<div class="lay-row" style="gap:16px">'+[["12+","years"],["3.4k+","clients"],["$28M","revenue"]].map(s=>'<div><div class="lay-h xs" style="color:var(--ltext)">'+s[0]+'</div><div class="lay-p" style="margin:0">'+s[1]+'</div></div>').join("")+'</div></div></div>',
+      "Pricing":(c)=>'<div class="lay-center" style="margin-bottom:9px">'+layEy("Pricing")+'<div class="lay-h sm">Simple, honest pricing</div></div>'+
+        '<div class="lay-grid" style="grid-template-columns:repeat(3,1fr);align-items:start">'+[["Starter","$49"],["Pro","$97"],["Scale","$199"]].map((t,i)=>'<div class="lay-card lay-center'+(i===1?' hl':'')+'">'+(i===1?'<span class="lay-pill">Popular</span>':'')+'<div class="lay-h xs">'+t[0]+'</div><div class="lay-price" style="font-size:14px;margin:2px 0">'+t[1]+'</div><div class="lay-li" style="text-align:left">All sections</div><div class="lay-li" style="text-align:left">Support</div><span class="lay-btn'+(i===1?'':' out')+'" style="margin-top:4px;display:block;text-align:center">'+_e(c.cta)+'</span></div>').join("")+'</div>',
+      "Guarantee":(c)=>'<div class="lay-card" style="display:flex;align-items:center;gap:11px"><div class="lay-seal">30<br>DAY</div><div><div class="lay-h sm">Try it 100% risk-free</div><div class="lay-p" style="margin:0">Love it or get every cent back — no questions asked.</div></div></div>',
+      "Urgency":(c)=>'<div class="lay-center"><div class="lay-p" style="text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:4px">⏳ This offer ends soon</div>'+
+        '<div class="lay-timer"><div>11<div class="lay-unit">hrs</div></div><div>42<div class="lay-unit">min</div></div><div>08<div class="lay-unit">sec</div></div></div>'+
+        '<span class="lay-btn">'+_e(c.cta)+'</span></div>',
+      "FAQ":(c)=>'<div class="lay-center" style="margin-bottom:8px">'+layEy("Questions")+'<div class="lay-h sm">You might be wondering…</div></div>'+
+        [["Do I need any tech skills?",1],["Will this work for my niche?",0],["Is there a guarantee?",0]].map(q=>'<div class="lay-faq"><div class="lay-h xs" style="margin:0">'+q[0]+'</div><span style="color:var(--lacc);font-weight:800">'+(q[1]?'–':'+')+'</span></div>'+(q[1]?'<div class="lay-p" style="margin:3px 0 0">Not at all — if you can fill in a form, you can launch this.</div>':'')).join(""),
+      "Lead Capture":(c)=>'<div class="lay-center">'+layEy("Get instant access")+'<div class="lay-h sm">Get the free playbook</div>'+
+        '<div class="lay-p" style="margin-bottom:6px">Enter your email and we’ll send it straight over.</div>'+
+        '<div class="lay-row" style="max-width:80%;margin:0 auto"><div class="lay-input"></div><span class="lay-btn">'+_e(c.cta)+'</span></div></div>',
+      "Final CTA":(c)=>'<div class="lay-center"><div class="lay-h">Ready to launch your funnel?</div>'+
+        '<div class="lay-p">Join thousands turning traffic into customers — starting today.</div>'+
+        '<span class="lay-btn" style="background:#fff;color:#111">'+_e(c.cta)+'</span></div>',
+      "Footer":(c)=>'<div class="lay-row" style="justify-content:space-between;align-items:center"><div class="lay-h xs" style="color:#fff">'+_e(c.brand)+'</div><div class="lay-row" style="gap:10px;opacity:.7"><span class="lay-p" style="margin:0">Privacy</span><span class="lay-p" style="margin:0">Terms</span><span class="lay-p" style="margin:0">Contact</span></div></div>'
     };
 
     function buildLayoutPreview(){
@@ -738,12 +767,29 @@
         layoutEl.innerHTML='<div class="lp-empty">Add sections in step 4 to see your funnel layout take shape here.</div>';
         return;
       }
-      layoutEl.innerHTML = state.sections.map((k,i)=>{
-        const fn = WF[k] || (()=> _bar('60%','h')+_bar('100%','sm'));
-        return '<div class="wf" style="animation-delay:'+(i*28)+'ms">'+
-          '<span class="wf-num">'+(i+1)+'</span><span class="wf-tag">'+k+'</span>'+
-          '<div style="margin-top:8px">'+fn()+'</div></div>';
+      const p=layPalette();
+      const niche=state.niche||"";
+      const ctx={
+        cta: state.cta || "Get Started",
+        niche: niche,
+        N: niche || "your business",
+        brand: niche || (state.desc ? state.desc.split(/\s+/).slice(0,2).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(" ") : "YourBrand"),
+        price: "$97"
+      };
+      const styleVars="--lbg:"+p.bg+";--lalt:"+p.alt+";--ltext:"+p.text+";--lmuted:"+p.muted+
+        ";--lacc:"+p.accent+";--lacc2:"+p.accent2+";--lon:"+p.on+";--lcard:"+p.card+";--lborder:"+p.border+
+        ";--lhero:linear-gradient(135deg,"+p.accent+","+p.accent2+");--lsoft:color-mix(in srgb,"+p.accent+" 14%,transparent)";
+      let stripe=0;
+      const body=state.sections.map(k=>{
+        const fn=LAY[k]; if(!fn) return "";
+        let cls="lay-sec";
+        if(k==="Hero Offer"||k==="Final CTA") cls+=" lay-hero";
+        else if(k==="Footer") cls+=" lay-foot";
+        else if(k==="Urgency"||k==="Lead Capture"){ cls+=" alt"; }
+        else { if(stripe%2===1) cls+=" alt"; stripe++; }
+        return '<div class="'+cls+'"><span class="lay-tag">'+_e(k)+'</span>'+fn(ctx)+'</div>';
       }).join("");
+      layoutEl.innerHTML='<div class="lay" style="'+styleVars+'">'+body+'</div>';
     }
 
     function render(){
