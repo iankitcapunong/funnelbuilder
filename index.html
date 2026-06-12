@@ -1087,6 +1087,10 @@
         body{background:var(--bg);${motifBg}color:var(--text);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased}
         img{max-width:100%;display:block;object-fit:cover}
         .ed-media{display:block;width:100%;height:100%;min-height:200px;object-fit:cover;border:0;background:#000;border-radius:inherit}
+        #funnel hr{border:0;border-top:1px solid var(--border);margin:26px 0}
+        #funnel .ed-spacer{height:48px}
+        #funnel ul.ed-list{margin:16px 0;padding-left:20px;text-align:left}
+        #funnel ul.ed-list li{margin:7px 0;color:var(--text)}
         .mockup .ed-media{aspect-ratio:16/10;height:auto;min-height:0}
         .photocard .ed-media,.auth-photo .ed-media,.ps-photo .ed-media{height:100%;min-height:100%}
         video.ed-media,iframe.ed-media{object-fit:cover}
@@ -1298,13 +1302,21 @@
         body.editing #funnel [contenteditable]:hover{outline:1px solid rgba(108,92,231,.45);outline-offset:2px;border-radius:3px}
         body.editing #funnel [contenteditable]:focus{outline:2px solid #6c5ce7;outline-offset:2px;border-radius:3px}
         body.editing #funnel img,body.editing #funnel .ed-media,body.editing #funnel .photocard,body.editing #funnel .auth-photo,body.editing #funnel .ps-photo,body.editing #funnel .mockup{cursor:pointer}
-        .ed-el{position:fixed;display:none;gap:2px;z-index:99970;background:rgba(15,15,20,.96);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:3px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
-        .ed-el span,.ed-el button{width:24px;height:24px;border:0;background:transparent;color:#e8e8ef;cursor:pointer;border-radius:5px;font-size:13px;line-height:1;display:grid;place-items:center;font-family:inherit}
+        .ed-el{position:fixed;display:none;gap:1px;z-index:99970;background:#6c5ce7;border:1px solid rgba(255,255,255,.25);border-radius:7px;padding:2px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+        .ed-el span,.ed-el button{width:23px;height:23px;border:0;background:transparent;color:#fff;cursor:pointer;border-radius:5px;font-size:13px;line-height:1;display:grid;place-items:center;font-family:inherit}
         .ed-el .ed-el-h{cursor:grab}.ed-el .ed-el-h:active{cursor:grabbing}
-        .ed-el span:hover{background:rgba(255,255,255,.2)}.ed-el .ed-el-x:hover{background:rgba(255,90,90,.32);color:#fff}
+        .ed-el span:hover,.ed-el button:hover{background:rgba(255,255,255,.22)}.ed-el .ed-el-x:hover{background:rgba(255,90,90,.55)}
+        body.editing #funnel .ed-sel{outline:2px solid #6c5ce7!important;outline-offset:2px}
         body.editing #funnel .ed-dragging{opacity:.4}
         body.editing #funnel .ed-drop-before{box-shadow:0 -3px 0 0 #6c5ce7}
         body.editing #funnel .ed-drop-after{box-shadow:0 3px 0 0 #6c5ce7}
+        .ed-addp{position:fixed;top:48px;right:0;bottom:0;width:240px;z-index:99980;background:#15151c;border-left:1px solid rgba(255,255,255,.1);padding:18px;overflow:auto;transform:translateX(100%);transition:transform .25s;color:#e8e8ef}
+        .ed-addp.show{transform:none}
+        .ed-addp h4{color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin:0 0 6px}
+        .ed-addp-hint{font-size:12px;color:#8a8a99;margin:0 0 14px}
+        .ed-add-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .ed-add-grid button{background:#0f0f14;border:1px solid rgba(255,255,255,.14);color:#e8e8ef;border-radius:9px;padding:12px 8px;font-size:12.5px;font-weight:550;cursor:pointer;font-family:inherit;text-align:left;transition:.14s}
+        .ed-add-grid button:hover{background:#6c5ce7;border-color:#6c5ce7;color:#fff}
         body.editing #funnel iframe,body.editing #funnel video{pointer-events:none}
         body.editing #funnel .ed-media:hover,body.editing #funnel .photocard:hover .ed-media,body.editing #funnel .auth-photo:hover .ed-media{outline:2px solid #6c5ce7;outline-offset:2px}
         body.editing #funnel img:hover{outline:2px solid #6c5ce7;outline-offset:2px}
@@ -1336,6 +1348,7 @@
           <button class="ed-btn" id="ed-undo" title="Undo (Ctrl+Z)">↺</button>
           <button class="ed-btn" id="ed-redo" title="Redo (Ctrl+Y)">↻</button>
           <span class="ed-seg" id="ed-seg"><button data-d="desktop" class="on" title="Desktop">🖥</button><button data-d="tablet" title="Tablet">▭</button><button data-d="mobile" title="Mobile">▯</button></span>
+          <button class="ed-btn" id="ed-add">＋ Add</button>
           <button class="ed-btn" id="ed-style">🎨 Style</button>
           <button class="ed-btn" id="ed-save">Save</button>
           <button class="ed-btn" id="ed-copy">&lt;/&gt; Copy HTML</button>
@@ -1353,8 +1366,24 @@
           <label>Button style <select id="pv-btn"><option value="solid">Solid</option><option value="grad">Gradient</option></select></label>
           <p class="ed-hint">Click any text to edit it. Click an image to replace it with an image or video. Hover a section for move / duplicate / hide / delete controls. Changes auto-save and restore on reload. Switch to <b>Preview</b> to play videos. <b>Export</b> / <b>Download</b> produce a clean, non-editable funnel.</p>
         </aside>
+        <aside class="ed-addp ed-ui" id="ed-addp">
+          <h4>Add a block</h4>
+          <p class="ed-addp-hint">Inserts into the section you last hovered.</p>
+          <div class="ed-add-grid">
+            <button data-block="heading">▌ Heading</button>
+            <button data-block="subhead">— Eyebrow</button>
+            <button data-block="text">¶ Text</button>
+            <button data-block="button">▭ Button</button>
+            <button data-block="list">☰ Bullet list</button>
+            <button data-block="image">▣ Image</button>
+            <button data-block="video">► Video</button>
+            <button data-block="divider">─ Divider</button>
+            <button data-block="spacer">⬓ Spacer</button>
+            <button data-block="section">▥ New section</button>
+          </div>
+        </aside>
         <div class="ed-modal ed-ui" id="ed-modal"><div class="ed-modal-in"><h4 id="ed-modal-t">Replace media</h4><input type="file" id="ed-file" accept="image/*,video/*"><div class="ed-or">— or paste an image / video URL (YouTube, Vimeo, .mp4) —</div><input type="text" id="ed-url" placeholder="https://..."><div class="ed-modal-actions"><button class="ed-btn" id="ed-bg-remove" style="margin-right:auto;display:none">Remove</button><button class="ed-btn" id="ed-cancel">Cancel</button><button class="ed-btn primary" id="ed-url-go">Use URL</button></div></div></div>
-        <div class="ed-el ed-ui" id="ed-el"><span class="ed-el-h" draggable="true" title="Drag to move">⠿</span><button class="ed-el-x" title="Delete this element">✕</button></div>
+        <div class="ed-el ed-ui" id="ed-el"><span class="ed-el-h" draggable="true" title="Drag to move">⠿</span><button data-a="up" title="Move up">↑</button><button data-a="down" title="Move down">↓</button><button data-a="dup" title="Duplicate">⧉</button><button data-a="del" class="ed-el-x" title="Delete">✕</button></div>
         <div class="ed-toast ed-ui" id="ed-toast"></div>
       `;
 
@@ -1454,22 +1483,54 @@
         function buildClean(){var links='';document.querySelectorAll('head link').forEach(function(l){links+=l.outerHTML;});var base=document.getElementById('ed-base').innerHTML;var ov=':root{',v=vars();for(var k in v)ov+=k+':'+v[k]+';';ov+='}';return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+links+'<style>'+base+'</style><style>'+ov+'</style></head><body><div id="funnel">'+clean()+'</div></body></html>';}
         function exportHTML(){dl(buildClean(),'funnel.html');flash('Exported — non-editable funnel');}
         try{window.__funnelExport=buildClean;}catch(e){}
-        /* ---- element-level drag to move + delete (text, buttons, images) ---- */
-        var MOV='.btn,.btn-ghost,h1,h2,h3,.eyebrow,p,li,.badge,blockquote,img,.ed-media,.stars,.qstars,.timer,form';
-        var curEl=null,dragEl=null,elBar=$('#ed-el');
+        /* ---- component editor: hover toolbar (move / duplicate / delete / drag) + Add blocks ---- */
+        var MOV='.btn,.btn-ghost,h1,h2,h3,h4,.eyebrow,p,li,blockquote,img,.ed-media,.bcard,.tcard,.ptier,.pain,.pcard,.step,.timer,form,hr,.badge,.stars,.qstars,.bigprice,.price';
+        var curEl=null,dragEl=null,lastSec=null,hideT=null,elBar=$('#ed-el');
         function clearDrop(){var n=FN.querySelectorAll('.ed-drop-before,.ed-drop-after');for(var i=0;i<n.length;i++)n[i].classList.remove('ed-drop-before','ed-drop-after');}
-        function placeBar(el){var r=el.getBoundingClientRect();elBar.style.top=Math.max(50,r.top+2)+'px';elBar.style.left=Math.max(6,Math.min(window.innerWidth-58,r.left+2))+'px';elBar.style.display='flex';}
-        function showElBar(el){curEl=el;placeBar(el);}
-        function hideElBar(){if(elBar)elBar.style.display='none';curEl=null;}
-        FN.addEventListener('mouseover',function(e){if(!editing||dragEl)return;var m=e.target.closest(MOV);if(m&&FN.contains(m)&&!m.closest('.ed-secbar'))showElBar(m);});
-        FN.addEventListener('mouseleave',function(){if(!dragEl)hideElBar();});
+        function placeBar(el){if(!el){return;}var r=el.getBoundingClientRect();var top=r.top-28;if(top<52)top=r.top+2;elBar.style.top=top+'px';elBar.style.left=Math.max(6,Math.min(window.innerWidth-150,r.left))+'px';elBar.style.display='flex';}
+        function selEl(el){if(curEl&&curEl!==el)curEl.classList.remove('ed-sel');curEl=el;if(el){el.classList.add('ed-sel');placeBar(el);}}
+        function hideElBar(){clearTimeout(hideT);if(elBar)elBar.style.display='none';if(curEl)curEl.classList.remove('ed-sel');curEl=null;}
+        function softHide(){clearTimeout(hideT);hideT=setTimeout(hideElBar,260);}
+        function keepBar(){clearTimeout(hideT);}
+        FN.addEventListener('mouseover',function(e){if(!editing)return;var s=e.target.closest('section,footer');if(s)lastSec=s;if(dragEl)return;var m=e.target.closest(MOV);if(m&&FN.contains(m)&&!m.closest('.ed-secbar')){keepBar();if(m!==curEl)selEl(m);}});
+        FN.addEventListener('mouseleave',softHide);
+        elBar.addEventListener('mouseenter',keepBar);
+        elBar.addEventListener('mouseleave',softHide);
         window.addEventListener('scroll',function(){if(curEl&&!dragEl)placeBar(curEl);},true);
-        elBar.querySelector('.ed-el-x').addEventListener('click',function(){if(curEl){pushUndo();curEl.remove();hideElBar();autosave();flash('Element removed');}});
+        elBar.addEventListener('click',function(e){var b=e.target.closest('button');if(!b||!curEl)return;var a=b.getAttribute('data-a');pushUndo();
+          if(a==='up'){var pv=curEl.previousElementSibling;while(pv&&pv.classList&&pv.classList.contains('ed-secbar'))pv=pv.previousElementSibling;if(pv)curEl.parentNode.insertBefore(curEl,pv);}
+          else if(a==='down'){var nx=curEl.nextElementSibling;while(nx&&nx.classList&&nx.classList.contains('ed-secbar'))nx=nx.nextElementSibling;if(nx)curEl.parentNode.insertBefore(nx,curEl);}
+          else if(a==='dup'){var c=curEl.cloneNode(true);c.classList.remove('ed-sel');curEl.parentNode.insertBefore(c,curEl.nextSibling);}
+          else if(a==='del'){var d=curEl;hideElBar();d.remove();autosave();return;}
+          bindEdit();autosave();placeBar(curEl);});
         var elHandle=elBar.querySelector('.ed-el-h');
-        elHandle.addEventListener('dragstart',function(e){if(!curEl){return;}dragEl=curEl;try{e.dataTransfer.setData('text/plain','el');e.dataTransfer.effectAllowed='move';}catch(_){}dragEl.classList.add('ed-dragging');elBar.style.display='none';});
+        elHandle.addEventListener('dragstart',function(e){if(!curEl)return;dragEl=curEl;try{e.dataTransfer.setData('text/plain','el');e.dataTransfer.effectAllowed='move';}catch(_){}dragEl.classList.add('ed-dragging');elBar.style.display='none';});
         elHandle.addEventListener('dragend',function(){if(dragEl)dragEl.classList.remove('ed-dragging');clearDrop();dragEl=null;});
         FN.addEventListener('dragover',function(e){if(!dragEl)return;e.preventDefault();clearDrop();var t=e.target.closest(MOV);if(t&&t!==dragEl&&!dragEl.contains(t)){var r=t.getBoundingClientRect();t.classList.add(e.clientY<r.top+r.height/2?'ed-drop-before':'ed-drop-after');}});
         FN.addEventListener('drop',function(e){if(!dragEl)return;e.preventDefault();var t=e.target.closest(MOV);if(t&&t!==dragEl&&!dragEl.contains(t)){pushUndo();var r=t.getBoundingClientRect();if(e.clientY<r.top+r.height/2)t.parentNode.insertBefore(dragEl,t);else t.parentNode.insertBefore(dragEl,t.nextSibling);autosave();flash('Moved');}clearDrop();if(dragEl)dragEl.classList.remove('ed-dragging');dragEl=null;});
+
+        /* ---- Add blocks ---- */
+        function el(tag,cls,html){var n=document.createElement(tag);if(cls)n.className=cls;if(html!=null)n.innerHTML=html;return n;}
+        function buildBlock(type){
+          if(type==='heading')return el('h2',null,'New headline');
+          if(type==='subhead')return el('span','eyebrow plain','New label');
+          if(type==='text')return el('p',null,'New paragraph — click to edit this text and make it yours.');
+          if(type==='button'){var a=el('a','btn','New Button');a.setAttribute('href','#');return a;}
+          if(type==='list')return el('ul','ed-list','<li>First point — click to edit</li><li>Second point</li><li>Third point</li>');
+          if(type==='image'){var i=el('img','ed-media');i.setAttribute('src','https://picsum.photos/seed/'+Math.floor(Math.random()*99999)+'/900/560');i.setAttribute('alt','');return i;}
+          if(type==='video'){var w=el('div','mockup');w.innerHTML='<div class="mbar"><i></i><i></i><i></i></div>';var i2=el('img','ed-media');i2.setAttribute('src','https://picsum.photos/seed/'+Math.floor(Math.random()*99999)+'/900/520');w.appendChild(i2);return w;}
+          if(type==='divider')return el('hr',null,'');
+          if(type==='spacer')return el('div','ed-spacer','');
+          return null;
+        }
+        function hostForAdd(){var sec=lastSec||FN.querySelector('section');if(!sec){sec=el('section','sec');sec.appendChild(el('div','container center'));FN.appendChild(sec);initSecs();}var c=sec.querySelector(':scope > .container');return c||sec;}
+        function addBlock(type){pushUndo();
+          if(type==='section'){var s=el('section','sec');var c=el('div','container center','<span class="eyebrow plain">New section</span><h2>New section heading</h2><p>Add your content here.</p><a href="#" class="btn">Call to action</a>');s.appendChild(c);if(lastSec&&lastSec.nextSibling)FN.insertBefore(s,lastSec.nextSibling);else FN.appendChild(s);initSecs();bindEdit();autosave();flash('Section added');closeAdd();s.scrollIntoView({behavior:'smooth',block:'center'});return;}
+          var node=buildBlock(type);if(!node){return;}var host=hostForAdd();host.appendChild(node);bindEdit();autosave();flash('Block added');closeAdd();node.scrollIntoView({behavior:'smooth',block:'center'});}
+        function openAdd(){$('#ed-panel').classList.remove('show');$('#ed-addp').classList.add('show');}
+        function closeAdd(){$('#ed-addp').classList.remove('show');}
+        $('#ed-add').addEventListener('click',function(){$('#ed-addp').classList.toggle('show');if($('#ed-addp').classList.contains('show'))$('#ed-panel').classList.remove('show');});
+        $('#ed-addp').addEventListener('click',function(e){var b=e.target.closest('button[data-block]');if(b)addBlock(b.getAttribute('data-block'));});
 
         restore(); setEdit(true);
       })();
