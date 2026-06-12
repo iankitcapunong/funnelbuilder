@@ -1443,7 +1443,7 @@
         /* layout paddings */
         body{padding-top:50px}
         body.editing{padding-left:266px;padding-right:286px}
-        @media(max-width:980px){body.editing{padding-left:0;padding-right:0}}
+        @media(max-width:1100px){body.editing{padding-right:0}}
         /* ============ LEFT RAIL ============ */
         .ed-left{position:fixed;top:50px;left:0;bottom:0;width:266px;z-index:99970;background:var(--ec-bg);border-right:1px solid var(--ec-bd);display:none;flex-direction:column;color:var(--ec-tx)}
         body.editing .ed-left{display:flex}
@@ -1491,10 +1491,7 @@
         /* ============ RIGHT RAIL (inspector) ============ */
         .ed-right{position:fixed;top:50px;right:0;bottom:0;width:286px;z-index:99970;background:var(--ec-bg);border-left:1px solid var(--ec-bd);display:none;flex-direction:column;overflow:auto;color:var(--ec-tx)}
         body.editing .ed-right{display:flex}
-        /* on small canvases the rails float over the canvas instead of disappearing */
-        @media(max-width:980px){.ed-left,.ed-right{box-shadow:0 18px 50px rgba(0,0,0,.5)}}
-        .ed-left.flash-rail,.ed-right.flash-rail{animation:railFlash .9s ease}
-        @keyframes railFlash{0%,100%{box-shadow:none}40%{box-shadow:0 0 0 2px var(--ec-ac),0 0 24px rgba(108,92,231,.6)}}
+        @media(max-width:1100px){body.editing .ed-right{display:none}}
         .ed-rsec{padding:16px;border-bottom:1px solid var(--ec-bd)}
         .ed-rsec h4{color:#fff;font-size:11px;text-transform:uppercase;letter-spacing:.12em;margin:0 0 14px;display:flex;align-items:center;gap:8px}
         .ed-rsec h4 .tagchip{font-size:10px;letter-spacing:.04em;text-transform:none;background:rgba(108,92,231,.22);color:var(--ec-ac2);padding:2px 7px;border-radius:6px;font-weight:700}
@@ -1577,10 +1574,6 @@
           <button class="ed-btn icon" id="ed-undo" title="Undo (Ctrl+Z)">↺</button>
           <button class="ed-btn icon" id="ed-redo" title="Redo (Ctrl+Shift+Z)">↻</button>
           <span class="ed-seg" id="ed-seg"><button data-d="desktop" class="on" title="Desktop">🖥</button><button data-d="tablet" title="Tablet">▭</button><button data-d="mobile" title="Mobile">▯</button></span>
-          <span class="ed-sep"></span>
-          <button class="ed-btn" id="ed-add" title="Add blocks">＋ Add</button>
-          <button class="ed-btn" id="ed-style" title="Design & style">🎨 Style</button>
-          <button class="ed-btn" id="ed-layers" title="Layers">☰</button>
           <span class="ed-sep"></span>
           <button class="ed-btn" id="ed-edit">Preview</button>
           <button class="ed-btn icon" id="ed-copy" title="Copy clean HTML">&lt;/&gt;</button>
@@ -1837,13 +1830,7 @@
 
         /* ============ LEFT RAIL: tabs ============ */
         var ltabs=document.querySelector('.ed-ltabs');
-        function setLeftTab(t){[].forEach.call(ltabs.children,function(x){x.classList.toggle('on',x.getAttribute('data-lt')===t);});['blocks','layers','pages'].forEach(function(n){$('#lp-'+n).classList.toggle('on',n===t);});if(t==='layers')renderLayers();if(t==='pages')renderPages();}
-        function flashRail(el){if(!el)return;el.classList.remove('flash-rail');void el.offsetWidth;el.classList.add('flash-rail');}
-        ltabs.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;setLeftTab(b.getAttribute('data-lt'));});
-        /* top-bar Add / Style / Layers buttons reveal + focus the side panels */
-        $('#ed-add').addEventListener('click',function(){if(!editing)setEdit(true);setLeftTab('blocks');var l=$('#ed-left');l.scrollTop=0;flashRail(l);});
-        $('#ed-layers').addEventListener('click',function(){if(!editing)setEdit(true);setLeftTab('layers');flashRail($('#ed-left'));});
-        $('#ed-style').addEventListener('click',function(){if(!editing)setEdit(true);var r=$('#ed-right');r.scrollTop=0;flashRail(r);});
+        ltabs.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var t=b.getAttribute('data-lt');[].forEach.call(ltabs.children,function(x){x.classList.remove('on');});b.classList.add('on');['blocks','layers','pages'].forEach(function(n){$('#lp-'+n).classList.toggle('on',n===t);});if(t==='layers')renderLayers();if(t==='pages')renderPages();});
 
         /* ---------- blocks library ---------- */
         var BLOCKS=[
