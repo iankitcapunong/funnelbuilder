@@ -802,7 +802,7 @@
       const headWeight = headChoice.serif ? 600 : pick([700,760,800]);
       const tracking = pick(["-.01em","-.02em","-.03em","0"]);
       const radius   = isLux ? pick(["3px","6px","10px"]) : pick(["8px","12px","16px","20px","26px"]);
-      const btnRadius= chance(.4) ? "999px" : radius;
+      const btnRadius= chance(.22) ? "999px" : pick(["6px","8px","10px",radius]);
       const btnBg    = chance(.5) ? `linear-gradient(135deg,var(--accent),var(--accent2))` : "var(--accent)";
       const iconShape= pick(["50%","14px","6px"]);
       const pad      = pick([58,70,82,94]);
@@ -1303,13 +1303,9 @@
         body.editing #funnel [contenteditable]:focus{outline:2px solid #6c5ce7;outline-offset:2px;border-radius:3px}
         body.editing #funnel img,body.editing #funnel .ed-media,body.editing #funnel .photocard,body.editing #funnel .auth-photo,body.editing #funnel .ps-photo,body.editing #funnel .mockup{cursor:pointer}
         .ed-el{position:fixed;display:none;gap:1px;z-index:99970;background:#6c5ce7;border:1px solid rgba(255,255,255,.25);border-radius:7px;padding:2px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
-        .ed-el span,.ed-el button{width:23px;height:23px;border:0;background:transparent;color:#fff;cursor:pointer;border-radius:5px;font-size:13px;line-height:1;display:grid;place-items:center;font-family:inherit}
-        .ed-el .ed-el-h{cursor:grab}.ed-el .ed-el-h:active{cursor:grabbing}
-        .ed-el span:hover,.ed-el button:hover{background:rgba(255,255,255,.22)}.ed-el .ed-el-x:hover{background:rgba(255,90,90,.55)}
+        .ed-el button{width:23px;height:23px;border:0;background:transparent;color:#fff;cursor:pointer;border-radius:5px;font-size:13px;line-height:1;display:grid;place-items:center;font-family:inherit}
+        .ed-el button:hover{background:rgba(255,255,255,.22)}.ed-el .ed-el-x:hover{background:rgba(255,90,90,.55)}
         body.editing #funnel .ed-sel{outline:2px solid #6c5ce7!important;outline-offset:2px}
-        body.editing #funnel .ed-dragging{opacity:.4}
-        body.editing #funnel .ed-drop-before{box-shadow:0 -3px 0 0 #6c5ce7}
-        body.editing #funnel .ed-drop-after{box-shadow:0 3px 0 0 #6c5ce7}
         .ed-addp{position:fixed;top:48px;right:0;bottom:0;width:240px;z-index:99980;background:#15151c;border-left:1px solid rgba(255,255,255,.1);padding:18px;overflow:auto;transform:translateX(100%);transition:transform .25s;color:#e8e8ef}
         .ed-addp.show{transform:none}
         .ed-addp h4{color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin:0 0 6px}
@@ -1362,6 +1358,7 @@
           <label>Heading font <select id="pv-head"><option value="">Default</option><option value="'Inter',sans-serif">Inter</option><option value="'Poppins',sans-serif">Poppins</option><option value="'Sora',sans-serif">Sora</option><option value="'Manrope',sans-serif">Manrope</option><option value="'Space Grotesk',sans-serif">Space Grotesk</option><option value="'Outfit',sans-serif">Outfit</option><option value="'Playfair Display',serif">Playfair Display</option><option value="'DM Serif Display',serif">DM Serif</option></select></label>
           <label>Body font <select id="pv-body"><option value="">Default</option><option value="'Inter',sans-serif">Inter</option><option value="'Manrope',sans-serif">Manrope</option><option value="'Poppins',sans-serif">Poppins</option><option value="'Sora',sans-serif">Sora</option></select></label>
           <label>Corner radius <input type="range" id="pv-r" min="0" max="36" value="14"></label>
+          <label>Button radius <input type="range" id="pv-btnr" min="0" max="32" value="14"></label>
           <label>Section spacing <input type="range" id="pv-pad" min="30" max="120" value="78"></label>
           <label>Button style <select id="pv-btn"><option value="solid">Solid</option><option value="grad">Gradient</option></select></label>
           <p class="ed-hint">Click any text to edit it. Click an image to replace it with an image or video. Hover a section for move / duplicate / hide / delete controls. Changes auto-save and restore on reload. Switch to <b>Preview</b> to play videos. <b>Export</b> / <b>Download</b> produce a clean, non-editable funnel.</p>
@@ -1383,7 +1380,7 @@
           </div>
         </aside>
         <div class="ed-modal ed-ui" id="ed-modal"><div class="ed-modal-in"><h4 id="ed-modal-t">Replace media</h4><input type="file" id="ed-file" accept="image/*,video/*"><div class="ed-or">— or paste an image / video URL (YouTube, Vimeo, .mp4) —</div><input type="text" id="ed-url" placeholder="https://..."><div class="ed-modal-actions"><button class="ed-btn" id="ed-bg-remove" style="margin-right:auto;display:none">Remove</button><button class="ed-btn" id="ed-cancel">Cancel</button><button class="ed-btn primary" id="ed-url-go">Use URL</button></div></div></div>
-        <div class="ed-el ed-ui" id="ed-el"><span class="ed-el-h" draggable="true" title="Drag to move">⠿</span><button data-a="up" title="Move up">↑</button><button data-a="down" title="Move down">↓</button><button data-a="dup" title="Duplicate">⧉</button><button data-a="del" class="ed-el-x" title="Delete">✕</button></div>
+        <div class="ed-el ed-ui" id="ed-el"><button data-a="up" title="Move up">↑</button><button data-a="down" title="Move down">↓</button><button data-a="dup" title="Duplicate">⧉</button><button data-a="del" class="ed-el-x" title="Delete">✕</button></div>
         <div class="ed-toast ed-ui" id="ed-toast"></div>
       `;
 
@@ -1395,7 +1392,7 @@
         var EDS='h1,h2,h3,h4,p,span,a,button,li,summary,b,strong,em,blockquote,.bigprice,.price,.badge,.eyebrow,.kicker,.auth-title,.brand,.ftag,.sname,.sval,.ps-sol,.stat b,.gstat b,.metrics b,.creds b';
         function $(s){return document.querySelector(s);}
         function flash(t){var e=$('#ed-toast');e.textContent=t;e.classList.add('show');setTimeout(function(){e.classList.remove('show');},1400);}
-        function vars(){var s=document.documentElement.style,o={},ks=['--accent','--accent2','--text','--bg','--alt','--card','--head','--body','--r','--pad','--btnbg'];ks.forEach(function(k){var v=s.getPropertyValue(k);if(v)o[k]=v;});return o;}
+        function vars(){var s=document.documentElement.style,o={},ks=['--accent','--accent2','--text','--bg','--alt','--card','--head','--body','--r','--btnr','--pad','--btnbg'];ks.forEach(function(k){var v=s.getPropertyValue(k);if(v)o[k]=v;});return o;}
         function applyVars(o){for(var k in o)document.documentElement.style.setProperty(k,o[k]);}
         function snap(){return {h:FN.innerHTML,v:vars()};}
         function pushUndo(){undo.push(snap());if(undo.length>80)undo.shift();redo=[];}
@@ -1473,6 +1470,7 @@
         $('#pv-head').addEventListener('change',function(){if(this.value)setVar('--head',this.value);});
         $('#pv-body').addEventListener('change',function(){if(this.value)setVar('--body',this.value);});
         $('#pv-r').addEventListener('input',function(){setVar('--r',this.value+'px');});
+        $('#pv-btnr').addEventListener('input',function(){setVar('--btnr',this.value+'px');});
         $('#pv-pad').addEventListener('input',function(){setVar('--pad',this.value+'px');});
         $('#pv-btn').addEventListener('change',function(){setVar('--btnbg',this.value==='grad'?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--accent)');});
         function applySnap(s){FN.innerHTML=s.h;applyVars(s.v||{});if(editing){initSecs();bindEdit();}}
@@ -1485,29 +1483,23 @@
         try{window.__funnelExport=buildClean;}catch(e){}
         /* ---- component editor: hover toolbar (move / duplicate / delete / drag) + Add blocks ---- */
         var MOV='.btn,.btn-ghost,h1,h2,h3,h4,.eyebrow,p,li,blockquote,img,.ed-media,.bcard,.tcard,.ptier,.pain,.pcard,.step,.timer,form,hr,.badge,.stars,.qstars,.bigprice,.price';
-        var curEl=null,dragEl=null,lastSec=null,hideT=null,elBar=$('#ed-el');
-        function clearDrop(){var n=FN.querySelectorAll('.ed-drop-before,.ed-drop-after');for(var i=0;i<n.length;i++)n[i].classList.remove('ed-drop-before','ed-drop-after');}
+        var curEl=null,lastSec=null,hideT=null,elBar=$('#ed-el');
         function placeBar(el){if(!el){return;}var r=el.getBoundingClientRect();var top=r.top-28;if(top<52)top=r.top+2;elBar.style.top=top+'px';elBar.style.left=Math.max(6,Math.min(window.innerWidth-150,r.left))+'px';elBar.style.display='flex';}
         function selEl(el){if(curEl&&curEl!==el)curEl.classList.remove('ed-sel');curEl=el;if(el){el.classList.add('ed-sel');placeBar(el);}}
         function hideElBar(){clearTimeout(hideT);if(elBar)elBar.style.display='none';if(curEl)curEl.classList.remove('ed-sel');curEl=null;}
         function softHide(){clearTimeout(hideT);hideT=setTimeout(hideElBar,260);}
         function keepBar(){clearTimeout(hideT);}
-        FN.addEventListener('mouseover',function(e){if(!editing)return;var s=e.target.closest('section,footer');if(s)lastSec=s;if(dragEl)return;var m=e.target.closest(MOV);if(m&&FN.contains(m)&&!m.closest('.ed-secbar')){keepBar();if(m!==curEl)selEl(m);}});
+        FN.addEventListener('mouseover',function(e){if(!editing)return;var s=e.target.closest('section,footer');if(s)lastSec=s;var m=e.target.closest(MOV);if(m&&FN.contains(m)&&!m.closest('.ed-secbar')){keepBar();if(m!==curEl)selEl(m);}});
         FN.addEventListener('mouseleave',softHide);
         elBar.addEventListener('mouseenter',keepBar);
         elBar.addEventListener('mouseleave',softHide);
-        window.addEventListener('scroll',function(){if(curEl&&!dragEl)placeBar(curEl);},true);
+        window.addEventListener('scroll',function(){if(curEl)placeBar(curEl);},true);
         elBar.addEventListener('click',function(e){var b=e.target.closest('button');if(!b||!curEl)return;var a=b.getAttribute('data-a');pushUndo();
           if(a==='up'){var pv=curEl.previousElementSibling;while(pv&&pv.classList&&pv.classList.contains('ed-secbar'))pv=pv.previousElementSibling;if(pv)curEl.parentNode.insertBefore(curEl,pv);}
           else if(a==='down'){var nx=curEl.nextElementSibling;while(nx&&nx.classList&&nx.classList.contains('ed-secbar'))nx=nx.nextElementSibling;if(nx)curEl.parentNode.insertBefore(nx,curEl);}
           else if(a==='dup'){var c=curEl.cloneNode(true);c.classList.remove('ed-sel');curEl.parentNode.insertBefore(c,curEl.nextSibling);}
           else if(a==='del'){var d=curEl;hideElBar();d.remove();autosave();return;}
           bindEdit();autosave();placeBar(curEl);});
-        var elHandle=elBar.querySelector('.ed-el-h');
-        elHandle.addEventListener('dragstart',function(e){if(!curEl)return;dragEl=curEl;try{e.dataTransfer.setData('text/plain','el');e.dataTransfer.effectAllowed='move';}catch(_){}dragEl.classList.add('ed-dragging');elBar.style.display='none';});
-        elHandle.addEventListener('dragend',function(){if(dragEl)dragEl.classList.remove('ed-dragging');clearDrop();dragEl=null;});
-        FN.addEventListener('dragover',function(e){if(!dragEl)return;e.preventDefault();clearDrop();var t=e.target.closest(MOV);if(t&&t!==dragEl&&!dragEl.contains(t)){var r=t.getBoundingClientRect();t.classList.add(e.clientY<r.top+r.height/2?'ed-drop-before':'ed-drop-after');}});
-        FN.addEventListener('drop',function(e){if(!dragEl)return;e.preventDefault();var t=e.target.closest(MOV);if(t&&t!==dragEl&&!dragEl.contains(t)){pushUndo();var r=t.getBoundingClientRect();if(e.clientY<r.top+r.height/2)t.parentNode.insertBefore(dragEl,t);else t.parentNode.insertBefore(dragEl,t.nextSibling);autosave();flash('Moved');}clearDrop();if(dragEl)dragEl.classList.remove('ed-dragging');dragEl=null;});
 
         /* ---- Add blocks ---- */
         function el(tag,cls,html){var n=document.createElement(tag);if(cls)n.className=cls;if(html!=null)n.innerHTML=html;return n;}
