@@ -1275,47 +1275,123 @@
       const fid = Math.random().toString(36).slice(2,9);
 
       const editorCSS = `
+        /* ============ PRO EDITOR CHROME (GHL-style) ============ */
         .ed-ui{font-family:'Inter',system-ui,sans-serif;box-sizing:border-box}
-        .ed-bar{position:fixed;top:0;left:0;right:0;height:48px;z-index:99990;display:flex;align-items:center;gap:8px;padding:0 12px;background:rgba(15,15,20,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1)}
-        .ed-logo{color:#fff;font-weight:700;font-size:13.5px;margin-right:auto;letter-spacing:.02em}
-        .ed-btn{background:rgba(255,255,255,.08);color:#e8e8ef;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;line-height:1}
-        .ed-btn:hover{background:rgba(255,255,255,.18)}
-        .ed-btn.primary{background:#6c5ce7;border-color:#6c5ce7;color:#fff}
-        .ed-seg{display:flex;gap:2px;background:rgba(255,255,255,.08);border-radius:8px;padding:2px}
-        .ed-seg button{background:transparent;border:0;color:#cfcfe0;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:14px;line-height:1}
-        .ed-seg button.on{background:rgba(255,255,255,.2);color:#fff}
-        body.editing{padding-top:48px}
-        .ed-panel{position:fixed;top:48px;right:0;bottom:0;width:270px;z-index:99980;background:#15151c;border-left:1px solid rgba(255,255,255,.1);padding:18px;overflow:auto;transform:translateX(100%);transition:transform .25s;color:#e8e8ef}
-        .ed-panel.show{transform:none}
-        .ed-panel h4{color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin:0 0 14px}
-        .ed-panel label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:13px;color:#b9b9c6}
-        .ed-panel input[type=color]{width:42px;height:28px;border:none;background:none;padding:0;border-radius:6px;cursor:pointer}
-        .ed-panel select,.ed-panel input[type=text]{background:#0f0f14;border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:7px;padding:7px;font-size:13px;font-family:inherit;max-width:140px}
-        .ed-panel input[type=range]{width:132px}
-        .ed-hint{font-size:12px;color:#8a8a99;line-height:1.55;margin-top:6px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+        .ed-ui *{box-sizing:border-box}
+        :root{--ec-bg:#0e0f14;--ec-bg2:#15161d;--ec-bg3:#1b1d26;--ec-bd:rgba(255,255,255,.09);--ec-bd2:rgba(255,255,255,.14);--ec-tx:#e8e8ef;--ec-mu:#8b8d9b;--ec-ac:#6c5ce7;--ec-ac2:#8b7bff}
+        /* top bar */
+        .ed-bar{position:fixed;top:0;left:0;right:0;height:50px;z-index:99990;display:flex;align-items:center;gap:7px;padding:0 12px;background:rgba(14,15,20,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--ec-bd)}
+        .ed-logo{display:flex;align-items:center;gap:8px;color:#fff;font-weight:700;font-size:13.5px;margin-right:auto;letter-spacing:.01em}
+        .ed-logo .dot{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;background:linear-gradient(135deg,var(--ec-ac),#42d4ff);font-size:12px}
+        .ed-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);color:var(--ec-tx);border:1px solid var(--ec-bd);border-radius:9px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;line-height:1;transition:.14s;white-space:nowrap}
+        .ed-btn:hover{background:rgba(255,255,255,.13);border-color:var(--ec-bd2)}
+        .ed-btn.primary{background:var(--ec-ac);border-color:var(--ec-ac);color:#fff}
+        .ed-btn.primary:hover{background:var(--ec-ac2)}
+        .ed-btn.icon{padding:8px 10px;font-size:14px}
+        .ed-sep{width:1px;height:24px;background:var(--ec-bd);margin:0 3px}
+        .ed-status{font-size:12px;color:var(--ec-mu);min-width:74px;text-align:center;transition:.2s}
+        .ed-status.saving{color:#f6b51e}.ed-status.saved{color:#34d399}
+        .ed-seg{display:flex;gap:2px;background:rgba(255,255,255,.06);border:1px solid var(--ec-bd);border-radius:9px;padding:2px}
+        .ed-seg button{background:transparent;border:0;color:#b9bac6;padding:6px 10px;border-radius:7px;cursor:pointer;font-size:14px;line-height:1;transition:.12s}
+        .ed-seg button.on{background:rgba(255,255,255,.18);color:#fff}
+        /* layout paddings */
+        body{padding-top:50px}
+        body.editing{padding-left:266px;padding-right:286px}
+        @media(max-width:1100px){body.editing{padding-right:0}}
+        /* ============ LEFT RAIL ============ */
+        .ed-left{position:fixed;top:50px;left:0;bottom:0;width:266px;z-index:99970;background:var(--ec-bg);border-right:1px solid var(--ec-bd);display:none;flex-direction:column;color:var(--ec-tx)}
+        body.editing .ed-left{display:flex}
+        .ed-ltabs{display:flex;padding:8px;gap:4px;border-bottom:1px solid var(--ec-bd)}
+        .ed-ltabs button{flex:1;background:transparent;border:1px solid transparent;color:var(--ec-mu);border-radius:8px;padding:8px 4px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:3px;transition:.12s}
+        .ed-ltabs button .ic{font-size:15px}
+        .ed-ltabs button:hover{color:var(--ec-tx);background:rgba(255,255,255,.05)}
+        .ed-ltabs button.on{color:#fff;background:var(--ec-bg3);border-color:var(--ec-bd)}
+        .ed-lbody{flex:1;overflow:auto;padding:14px}
+        .ed-lbody::-webkit-scrollbar,.ed-right::-webkit-scrollbar{width:8px}
+        .ed-lbody::-webkit-scrollbar-thumb,.ed-right::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+        .ed-lpane{display:none}.ed-lpane.on{display:block}
+        .ed-cat{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--ec-mu);margin:16px 0 9px}
+        .ed-cat:first-child{margin-top:0}
+        .ed-blocks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .ed-block{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;background:var(--ec-bg2);border:1px solid var(--ec-bd);border-radius:10px;padding:13px 6px;font-size:11.5px;font-weight:550;color:#cdcdd8;cursor:grab;text-align:center;transition:.13s;user-select:none}
+        .ed-block:hover{background:var(--ec-ac);border-color:var(--ec-ac);color:#fff;transform:translateY(-1px)}
+        .ed-block .ic{font-size:18px;line-height:1;opacity:.92}
+        .ed-block.dragging{opacity:.4}
+        /* layers */
+        .ed-layer{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:8px;font-size:12.5px;color:#cdcdd8;cursor:pointer;border:1px solid transparent;transition:.1s}
+        .ed-layer:hover{background:var(--ec-bg2)}
+        .ed-layer.sel{background:rgba(108,92,231,.2);border-color:var(--ec-ac);color:#fff}
+        .ed-layer.child{margin-left:16px;font-size:12px;color:var(--ec-mu)}
+        .ed-layer .lt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .ed-layer .le{opacity:.55;font-size:13px;padding:2px 4px;border-radius:5px}
+        .ed-layer .le:hover{opacity:1;background:rgba(255,255,255,.1)}
+        .ed-layer .lic{font-size:13px;opacity:.7;flex:none}
+        /* pages */
+        .ed-pagesadd{display:flex;gap:6px;margin-bottom:12px}
+        .ed-pagesadd select{flex:1;background:var(--ec-bg2);border:1px solid var(--ec-bd);color:#fff;border-radius:8px;padding:7px;font-size:12.5px;font-family:inherit}
+        .ed-page{display:flex;align-items:center;gap:9px;padding:10px;border-radius:10px;background:var(--ec-bg2);border:1px solid var(--ec-bd);cursor:pointer;margin-bottom:8px;transition:.12s}
+        .ed-page:hover{border-color:var(--ec-bd2)}
+        .ed-page.on{border-color:var(--ec-ac);box-shadow:0 0 0 1px var(--ec-ac)}
+        .ed-page .pnum{width:24px;height:24px;flex:none;border-radius:7px;display:grid;place-items:center;font-size:12px;background:rgba(108,92,231,.22);color:var(--ec-ac2);font-weight:700}
+        .ed-page.on .pnum{background:var(--ec-ac);color:#fff}
+        .ed-page .pmeta{flex:1;min-width:0}
+        .ed-page .pnm{font-size:13px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .ed-page .pty{font-size:11px;color:var(--ec-mu)}
+        .ed-page .pact{display:flex;gap:2px;opacity:0;transition:.12s}
+        .ed-page:hover .pact{opacity:1}
+        .ed-page .pact button{background:transparent;border:0;color:var(--ec-mu);cursor:pointer;font-size:13px;width:22px;height:22px;border-radius:5px}
+        .ed-page .pact button:hover{background:rgba(255,255,255,.12);color:#fff}
+        .ed-flow{font-size:11px;color:var(--ec-mu);text-align:center;margin:4px 0 12px;line-height:1.5}
+        /* ============ RIGHT RAIL (inspector) ============ */
+        .ed-right{position:fixed;top:50px;right:0;bottom:0;width:286px;z-index:99970;background:var(--ec-bg);border-left:1px solid var(--ec-bd);display:none;flex-direction:column;overflow:auto;color:var(--ec-tx)}
+        body.editing .ed-right{display:flex}
+        @media(max-width:1100px){body.editing .ed-right{display:none}}
+        .ed-rsec{padding:16px;border-bottom:1px solid var(--ec-bd)}
+        .ed-rsec h4{color:#fff;font-size:11px;text-transform:uppercase;letter-spacing:.12em;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+        .ed-rsec h4 .tagchip{font-size:10px;letter-spacing:.04em;text-transform:none;background:rgba(108,92,231,.22);color:var(--ec-ac2);padding:2px 7px;border-radius:6px;font-weight:700}
+        .ed-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;margin-bottom:13px;color:#b9b9c6}
+        .ed-row:last-child{margin-bottom:0}
+        .ed-right input[type=color]{width:42px;height:28px;border:none;background:none;padding:0;border-radius:6px;cursor:pointer}
+        .ed-right select,.ed-right input[type=text]{background:var(--ec-bg2);border:1px solid var(--ec-bd);color:#fff;border-radius:7px;padding:7px;font-size:12.5px;font-family:inherit;max-width:150px}
+        .ed-right input[type=range]{width:140px;accent-color:var(--ec-ac)}
+        .ed-align{display:flex;gap:3px}
+        .ed-align button{background:var(--ec-bg2);border:1px solid var(--ec-bd);color:#b9b9c6;width:30px;height:28px;border-radius:6px;cursor:pointer;font-size:13px}
+        .ed-align button.on{background:var(--ec-ac);border-color:var(--ec-ac);color:#fff}
+        .ed-noselect{font-size:12px;color:var(--ec-mu);line-height:1.55}
+        .ed-rsec.ctx{display:none}.ed-rsec.ctx.on{display:block}
+        .ed-hint{font-size:11.5px;color:#777987;line-height:1.55;padding:14px 16px}
+        /* ============ CANVAS EDIT AFFORDANCES ============ */
         body.editing #funnel [data-ed-sel]{transition:outline .12s}
-        body.editing #funnel [data-ed-sel]:hover{outline:2px dashed rgba(108,92,231,.7);outline-offset:-2px}
-        .ed-secbar{position:absolute;top:10px;right:10px;z-index:60;display:none;gap:3px;background:rgba(15,15,20,.94);border:1px solid rgba(255,255,255,.16);border-radius:9px;padding:4px;box-shadow:0 8px 22px rgba(0,0,0,.4)}
+        body.editing #funnel [data-ed-sel]:hover{outline:1.5px dashed rgba(108,92,231,.55);outline-offset:-2px}
+        .ed-secbar{position:absolute;top:10px;right:10px;z-index:60;display:none;gap:3px;background:rgba(14,15,20,.96);border:1px solid var(--ec-bd2);border-radius:9px;padding:4px;box-shadow:0 8px 22px rgba(0,0,0,.45)}
         body.editing [data-ed-sel]:hover>.ed-secbar{display:flex}
         .ed-secbar button{background:transparent;border:0;color:#e8e8ef;cursor:pointer;font-size:13px;width:28px;height:28px;border-radius:6px;line-height:1}
         .ed-secbar button:hover{background:rgba(255,255,255,.2)}
-        body.editing #funnel [contenteditable]:hover{outline:1px solid rgba(108,92,231,.45);outline-offset:2px;border-radius:3px}
-        body.editing #funnel [contenteditable]:focus{outline:2px solid #6c5ce7;outline-offset:2px;border-radius:3px}
+        body.editing #funnel [contenteditable]:hover{outline:1px solid rgba(108,92,231,.4);outline-offset:2px;border-radius:3px}
+        body.editing #funnel [contenteditable]:focus{outline:2px solid var(--ec-ac);outline-offset:2px;border-radius:3px}
         body.editing #funnel img,body.editing #funnel .ed-media,body.editing #funnel .photocard,body.editing #funnel .auth-photo,body.editing #funnel .ps-photo,body.editing #funnel .mockup{cursor:pointer}
-        .ed-el{position:fixed;display:none;gap:1px;z-index:99970;background:#6c5ce7;border:1px solid rgba(255,255,255,.25);border-radius:7px;padding:2px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
-        .ed-el button{width:23px;height:23px;border:0;background:transparent;color:#fff;cursor:pointer;border-radius:5px;font-size:13px;line-height:1;display:grid;place-items:center;font-family:inherit}
-        .ed-el button:hover{background:rgba(255,255,255,.22)}.ed-el .ed-el-x:hover{background:rgba(255,90,90,.55)}
-        body.editing #funnel .ed-sel{outline:2px solid #6c5ce7!important;outline-offset:2px}
-        .ed-addp{position:fixed;top:48px;right:0;bottom:0;width:240px;z-index:99980;background:#15151c;border-left:1px solid rgba(255,255,255,.1);padding:18px;overflow:auto;transform:translateX(100%);transition:transform .25s;color:#e8e8ef}
-        .ed-addp.show{transform:none}
-        .ed-addp h4{color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin:0 0 6px}
-        .ed-addp-hint{font-size:12px;color:#8a8a99;margin:0 0 14px}
-        .ed-add-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-        .ed-add-grid button{background:#0f0f14;border:1px solid rgba(255,255,255,.14);color:#e8e8ef;border-radius:9px;padding:12px 8px;font-size:12.5px;font-weight:550;cursor:pointer;font-family:inherit;text-align:left;transition:.14s}
-        .ed-add-grid button:hover{background:#6c5ce7;border-color:#6c5ce7;color:#fff}
+        body.editing #funnel .ed-sel{outline:2px solid var(--ec-ac)!important;outline-offset:2px}
         body.editing #funnel iframe,body.editing #funnel video{pointer-events:none}
-        body.editing #funnel .ed-media:hover,body.editing #funnel .photocard:hover .ed-media,body.editing #funnel .auth-photo:hover .ed-media{outline:2px solid #6c5ce7;outline-offset:2px}
-        body.editing #funnel img:hover{outline:2px solid #6c5ce7;outline-offset:2px}
+        body.editing #funnel .ed-media:hover,body.editing #funnel .photocard:hover .ed-media,body.editing #funnel .auth-photo:hover .ed-media{outline:2px solid var(--ec-ac);outline-offset:2px}
+        body.editing #funnel img:hover{outline:2px solid var(--ec-ac);outline-offset:2px}
+        /* floating element toolbar (with drag handle) */
+        .ed-el{position:fixed;display:none;gap:1px;z-index:99975;background:var(--ec-ac);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:2px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+        .ed-el button{width:24px;height:24px;border:0;background:transparent;color:#fff;cursor:pointer;border-radius:5px;font-size:13px;line-height:1;display:grid;place-items:center;font-family:inherit}
+        .ed-el button:hover{background:rgba(255,255,255,.24)}.ed-el .ed-el-x:hover{background:rgba(255,90,90,.6)}
+        .ed-el .ed-el-drag{cursor:grab}.ed-el .ed-el-drag:active{cursor:grabbing}
+        /* drop indicator */
+        .ed-drop{position:fixed;z-index:99974;height:3px;background:var(--ec-ac);border-radius:3px;pointer-events:none;display:none;box-shadow:0 0 0 1px rgba(108,92,231,.4),0 0 10px rgba(108,92,231,.7)}
+        .ed-drop::before{content:"";position:absolute;left:-5px;top:-3px;width:9px;height:9px;border-radius:50%;background:var(--ec-ac)}
+        body.ed-dragging *{cursor:grabbing!important}
+        body.ed-dragging #funnel [contenteditable]{pointer-events:none}
+        /* inline rich-text toolbar */
+        .ed-rtb{position:fixed;display:none;z-index:99978;gap:1px;background:#0e0f14;border:1px solid var(--ec-bd2);border-radius:9px;padding:3px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+        .ed-rtb button{min-width:28px;height:28px;border:0;background:transparent;color:#e8e8ef;cursor:pointer;border-radius:6px;font-size:13px;line-height:1;padding:0 7px;font-family:inherit}
+        .ed-rtb button:hover{background:rgba(255,255,255,.16)}
+        .ed-rtb .b{font-weight:800}.ed-rtb .i{font-style:italic}.ed-rtb .u{text-decoration:underline}
+        .ed-rtb input[type=color]{width:26px;height:24px;border:0;background:none;padding:0;border-radius:5px;cursor:pointer;vertical-align:middle}
+        .ed-rtb .div{width:1px;background:var(--ec-bd);margin:3px 2px}
+        /* hidden / device */
         .ed-hidden{display:none}
         body.editing .ed-hidden{display:block;opacity:.32;outline:2px dashed #888}
         #funnel{transition:max-width .25s}
@@ -1324,63 +1400,94 @@
         #funnel.is-mobile .hero-art{display:none}
         #funnel.is-mobile .optin-form{flex-direction:column}
         #funnel.is-tablet .bgrid.c4,#funnel.is-tablet .bgrid.c3{grid-template-columns:repeat(2,1fr)!important}
-        .ed-modal{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55)}
+        /* modal */
+        .ed-modal{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6)}
         .ed-modal.show{display:flex}
-        .ed-modal-in{background:#15151c;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:22px;width:340px;color:#e8e8ef}
+        .ed-modal-in{background:var(--ec-bg2);border:1px solid var(--ec-bd2);border-radius:14px;padding:22px;width:360px;color:#e8e8ef}
         .ed-modal-in h4{margin:0 0 14px;color:#fff}
         .ed-or{font-size:12px;color:#8a8a99;margin:12px 0 8px;text-align:center}
-        .ed-modal-in input[type=text]{width:100%;background:#0f0f14;border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:8px;padding:9px;font-size:13px}
+        .ed-modal-in input[type=text]{width:100%;background:#0f0f14;border:1px solid var(--ec-bd);color:#fff;border-radius:8px;padding:9px;font-size:13px}
         .ed-modal-in input[type=file]{width:100%;font-size:13px;color:#cfcfe0}
         .ed-modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+        .ed-pub-url{display:flex;gap:8px;margin-top:6px}
+        .ed-pub-url input{flex:1}
+        /* toast */
         .ed-toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);z-index:100000;background:#111;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;pointer-events:none;border:1px solid rgba(255,255,255,.16)}
         .ed-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-        @media print{.ed-ui{display:none!important}body.editing{padding-top:0}}
+        @media print{.ed-ui{display:none!important}body.editing{padding:0}body{padding-top:0}}
       `;
 
       const editorUI = `
         <div class="ed-bar ed-ui">
-          <span class="ed-logo">✦ Funnel Editor</span>
-          <button class="ed-btn" id="ed-edit">Preview</button>
-          <button class="ed-btn" id="ed-undo" title="Undo (Ctrl+Z)">↺</button>
-          <button class="ed-btn" id="ed-redo" title="Redo (Ctrl+Y)">↻</button>
+          <span class="ed-logo"><span class="dot">✦</span> Funnel Editor</span>
+          <span class="ed-status saved" id="ed-status">Saved</span>
+          <span class="ed-sep"></span>
+          <button class="ed-btn icon" id="ed-undo" title="Undo (Ctrl+Z)">↺</button>
+          <button class="ed-btn icon" id="ed-redo" title="Redo (Ctrl+Shift+Z)">↻</button>
           <span class="ed-seg" id="ed-seg"><button data-d="desktop" class="on" title="Desktop">🖥</button><button data-d="tablet" title="Tablet">▭</button><button data-d="mobile" title="Mobile">▯</button></span>
-          <button class="ed-btn" id="ed-add">＋ Add</button>
-          <button class="ed-btn" id="ed-style">🎨 Style</button>
-          <button class="ed-btn" id="ed-save">Save</button>
-          <button class="ed-btn" id="ed-copy">&lt;/&gt; Copy HTML</button>
-          <button class="ed-btn primary" id="ed-export">Export HTML</button>
+          <span class="ed-sep"></span>
+          <button class="ed-btn" id="ed-edit">Preview</button>
+          <button class="ed-btn icon" id="ed-copy" title="Copy clean HTML">&lt;/&gt;</button>
+          <button class="ed-btn" id="ed-export">Export</button>
+          <button class="ed-btn primary" id="ed-publish">Publish</button>
         </div>
-        <aside class="ed-panel ed-ui" id="ed-panel">
-          <h4>Design controls</h4>
-          <label>Accent color <input type="color" id="pv-accent"></label>
-          <label>Text color <input type="color" id="pv-text"></label>
-          <label>Background <input type="color" id="pv-bg"></label>
-          <label>Heading font <select id="pv-head"><option value="">Default</option><option value="'Inter',sans-serif">Inter</option><option value="'Poppins',sans-serif">Poppins</option><option value="'Sora',sans-serif">Sora</option><option value="'Manrope',sans-serif">Manrope</option><option value="'Space Grotesk',sans-serif">Space Grotesk</option><option value="'Outfit',sans-serif">Outfit</option><option value="'Playfair Display',serif">Playfair Display</option><option value="'DM Serif Display',serif">DM Serif</option></select></label>
-          <label>Body font <select id="pv-body"><option value="">Default</option><option value="'Inter',sans-serif">Inter</option><option value="'Manrope',sans-serif">Manrope</option><option value="'Poppins',sans-serif">Poppins</option><option value="'Sora',sans-serif">Sora</option></select></label>
-          <label>Corner radius <input type="range" id="pv-r" min="0" max="36" value="14"></label>
-          <label>Button radius <input type="range" id="pv-btnr" min="0" max="32" value="14"></label>
-          <label>Section spacing <input type="range" id="pv-pad" min="30" max="120" value="78"></label>
-          <label>Button style <select id="pv-btn"><option value="solid">Solid</option><option value="grad">Gradient</option></select></label>
-          <p class="ed-hint">Click any text to edit it. Click an image to replace it with an image or video. Hover a section for move / duplicate / hide / delete controls. Changes auto-save and restore on reload. Switch to <b>Preview</b> to play videos. <b>Export</b> / <b>Download</b> produce a clean, non-editable funnel.</p>
-        </aside>
-        <aside class="ed-addp ed-ui" id="ed-addp">
-          <h4>Add a block</h4>
-          <p class="ed-addp-hint">Inserts into the section you last hovered.</p>
-          <div class="ed-add-grid">
-            <button data-block="heading">▌ Heading</button>
-            <button data-block="subhead">— Eyebrow</button>
-            <button data-block="text">¶ Text</button>
-            <button data-block="button">▭ Button</button>
-            <button data-block="list">☰ Bullet list</button>
-            <button data-block="image">▣ Image</button>
-            <button data-block="video">► Video</button>
-            <button data-block="divider">─ Divider</button>
-            <button data-block="spacer">⬓ Spacer</button>
-            <button data-block="section">▥ New section</button>
+
+        <aside class="ed-left ed-ui" id="ed-left">
+          <div class="ed-ltabs">
+            <button data-lt="blocks" class="on"><span class="ic">⧉</span>Blocks</button>
+            <button data-lt="layers"><span class="ic">☰</span>Layers</button>
+            <button data-lt="pages"><span class="ic">▤</span>Pages</button>
+          </div>
+          <div class="ed-lbody">
+            <div class="ed-lpane on" id="lp-blocks"></div>
+            <div class="ed-lpane" id="lp-layers"><div class="ed-noselect" style="padding:4px 0">Loading layers…</div></div>
+            <div class="ed-lpane" id="lp-pages">
+              <div class="ed-flow">Build a multi-step funnel — each step is its own page.</div>
+              <div class="ed-pagesadd">
+                <select id="ed-newstep">
+                  <option value="optin">＋ Opt-in page</option>
+                  <option value="sales">＋ Sales page</option>
+                  <option value="checkout">＋ Checkout page</option>
+                  <option value="upsell">＋ Upsell (OTO)</option>
+                  <option value="thankyou">＋ Thank-you page</option>
+                  <option value="blank">＋ Blank page</option>
+                </select>
+                <button class="ed-btn primary" id="ed-addstep">Add</button>
+              </div>
+              <div id="ed-pagelist"></div>
+            </div>
           </div>
         </aside>
+
+        <aside class="ed-right ed-ui" id="ed-right">
+          <div class="ed-rsec ctx" id="ed-ctx">
+            <h4>Selected <span class="tagchip" id="ctx-tag">element</span></h4>
+            <div class="ed-row">Alignment <span class="ed-align" id="ctx-align"><button data-al="left">⬅</button><button data-al="center">⬌</button><button data-al="right">➡</button></span></div>
+            <div class="ed-row" id="ctx-size-row">Text size <input type="range" id="ctx-size" min="11" max="84" value="18"></div>
+            <div class="ed-row" id="ctx-color-row">Text color <input type="color" id="ctx-color" value="#222222"></div>
+            <div class="ed-row" id="ctx-link-row">Link URL <input type="text" id="ctx-link" placeholder="https://…" style="max-width:150px"></div>
+            <div class="ed-row"><button class="ed-btn" id="ctx-dup">⧉ Duplicate</button><button class="ed-btn" id="ctx-del" style="color:#ff7676">✕ Delete</button></div>
+          </div>
+          <div class="ed-rsec">
+            <h4>Design system</h4>
+            <div class="ed-row">Accent color <input type="color" id="pv-accent"></div>
+            <div class="ed-row">Text color <input type="color" id="pv-text"></div>
+            <div class="ed-row">Background <input type="color" id="pv-bg"></div>
+            <div class="ed-row">Heading font <select id="pv-head"><option value="">Default</option><option value="'Inter',sans-serif">Inter</option><option value="'Poppins',sans-serif">Poppins</option><option value="'Sora',sans-serif">Sora</option><option value="'Manrope',sans-serif">Manrope</option><option value="'Space Grotesk',sans-serif">Space Grotesk</option><option value="'Outfit',sans-serif">Outfit</option><option value="'Playfair Display',serif">Playfair Display</option><option value="'DM Serif Display',serif">DM Serif</option></select></div>
+            <div class="ed-row">Body font <select id="pv-body"><option value="">Default</option><option value="'Inter',sans-serif">Inter</option><option value="'Manrope',sans-serif">Manrope</option><option value="'Poppins',sans-serif">Poppins</option><option value="'Sora',sans-serif">Sora</option></select></div>
+            <div class="ed-row">Corner radius <input type="range" id="pv-r" min="0" max="36" value="14"></div>
+            <div class="ed-row">Button radius <input type="range" id="pv-btnr" min="0" max="32" value="14"></div>
+            <div class="ed-row">Section spacing <input type="range" id="pv-pad" min="30" max="120" value="78"></div>
+            <div class="ed-row">Button style <select id="pv-btn"><option value="solid">Solid</option><option value="grad">Gradient</option></select></div>
+          </div>
+          <p class="ed-hint">Click text to edit it. Select text for the formatting bar. Click an image to replace it with a photo or video. Drag blocks from the left onto the canvas, or use the ⋮⋮ handle to reorder. Everything auto-saves.</p>
+        </aside>
+
         <div class="ed-modal ed-ui" id="ed-modal"><div class="ed-modal-in"><h4 id="ed-modal-t">Replace media</h4><input type="file" id="ed-file" accept="image/*,video/*"><div class="ed-or">— or paste an image / video URL (YouTube, Vimeo, .mp4) —</div><input type="text" id="ed-url" placeholder="https://..."><div class="ed-modal-actions"><button class="ed-btn" id="ed-bg-remove" style="margin-right:auto;display:none">Remove</button><button class="ed-btn" id="ed-cancel">Cancel</button><button class="ed-btn primary" id="ed-url-go">Use URL</button></div></div></div>
-        <div class="ed-el ed-ui" id="ed-el"><button data-a="up" title="Move up">↑</button><button data-a="down" title="Move down">↓</button><button data-a="dup" title="Duplicate">⧉</button><button data-a="del" class="ed-el-x" title="Delete">✕</button></div>
+        <div class="ed-modal ed-ui" id="ed-pub"><div class="ed-modal-in"><h4>🚀 Publish funnel</h4><p class="ed-or" style="text-align:left;margin:0 0 10px">Your funnel is ready. Share this link or export the clean HTML to host anywhere.</p><div class="ed-pub-url"><input type="text" id="ed-pub-link" readonly><button class="ed-btn primary" id="ed-pub-copy">Copy</button></div><div class="ed-modal-actions"><button class="ed-btn" id="ed-pub-close">Close</button><button class="ed-btn primary" id="ed-pub-export">Download HTML</button></div></div></div>
+        <div class="ed-el ed-ui" id="ed-el"><button class="ed-el-drag" data-a="drag" title="Drag to move" draggable="true">⋮⋮</button><button data-a="up" title="Move up">↑</button><button data-a="down" title="Move down">↓</button><button data-a="dup" title="Duplicate">⧉</button><button data-a="del" class="ed-el-x" title="Delete">✕</button></div>
+        <div class="ed-drop ed-ui" id="ed-drop"></div>
+        <div class="ed-rtb ed-ui" id="ed-rtb"><button class="b" data-c="bold" title="Bold">B</button><button class="i" data-c="italic" title="Italic">I</button><button class="u" data-c="underline" title="Underline">U</button><span class="div"></span><button data-c="justifyLeft" title="Align left">⬅</button><button data-c="justifyCenter" title="Align center">⬌</button><button data-c="justifyRight" title="Align right">➡</button><span class="div"></span><button data-c="link" title="Add link">🔗</button><input type="color" id="rtb-color" title="Text color" value="#6c5ce7"><button data-c="removeFormat" title="Clear formatting">⌫</button></div>
         <div class="ed-toast ed-ui" id="ed-toast"></div>
       `;
 
@@ -1389,17 +1496,38 @@
         var FN=document.getElementById('funnel'); if(!FN) return;
         var fid=(document.body.getAttribute('data-fid')||'x'), KEY='ezfunnel:'+fid;
         var editing=false, undo=[], redo=[], st, imT=null, imM=null;
+        var pages=[], active=0;
         var EDS='h1,h2,h3,h4,p,span,a,button,li,summary,b,strong,em,blockquote,.bigprice,.price,.badge,.eyebrow,.kicker,.auth-title,.brand,.ftag,.sname,.sval,.ps-sol,.stat b,.gstat b,.metrics b,.creds b';
+        var MOV='.btn,.btn-ghost,h1,h2,h3,h4,.eyebrow,.kicker,p,li,blockquote,img,.ed-media,.mockup,.photocard,.bcard,.tcard,.ptier,.ponly,.pain,.pcard,.step,.timer,.metrics,.press,.guarantee,.faq,form,hr,.ed-spacer,.ed-list,.badge,.qstars,.bigprice,.price';
         function $(s){return document.querySelector(s);}
+        function rnd(){return Math.floor(Math.random()*99999);}
+        function H(h){var d=document.createElement('div');d.innerHTML=h;return d.firstElementChild;}
         function flash(t){var e=$('#ed-toast');e.textContent=t;e.classList.add('show');setTimeout(function(){e.classList.remove('show');},1400);}
+        function setStatus(s){var e=$('#ed-status');if(!e)return;e.className='ed-status '+(s==='Saving…'?'saving':'saved');e.textContent=s;}
+
+        /* ---------- design vars ---------- */
         function vars(){var s=document.documentElement.style,o={},ks=['--accent','--accent2','--text','--bg','--alt','--card','--head','--body','--r','--btnr','--pad','--btnbg'];ks.forEach(function(k){var v=s.getPropertyValue(k);if(v)o[k]=v;});return o;}
         function applyVars(o){for(var k in o)document.documentElement.style.setProperty(k,o[k]);}
+
+        /* ---------- snapshots / persistence (page-scoped + funnel-scoped) ---------- */
         function snap(){return {h:FN.innerHTML,v:vars()};}
         function pushUndo(){undo.push(snap());if(undo.length>80)undo.shift();redo=[];}
-        function autosave(){clearTimeout(st);st=setTimeout(function(){try{localStorage.setItem(KEY,JSON.stringify(snap()));}catch(e){}},700);}
-        function save(){try{localStorage.setItem(KEY,JSON.stringify(snap()));flash('Saved');}catch(e){flash('Saved for this session');}}
-        function restore(){try{var d=JSON.parse(localStorage.getItem(KEY));if(d&&d.h){FN.innerHTML=d.h;if(d.v)applyVars(d.v);}}catch(e){}}
-        function clean(){var c=FN.cloneNode(true);c.querySelectorAll('.ed-secbar').forEach(function(e){e.remove();});c.querySelectorAll('.ed-hidden').forEach(function(e){e.remove();});c.querySelectorAll('[contenteditable]').forEach(function(e){e.removeAttribute('contenteditable');});c.querySelectorAll('[data-ed-sel]').forEach(function(e){e.removeAttribute('data-ed-sel');e.style.position='';});return c.innerHTML;}
+        function commitActive(){if(pages[active]){pages[active].html=FN.innerHTML;pages[active].vars=vars();}}
+        function fullState(){commitActive();return {pages:pages,active:active};}
+        function autosave(){setStatus('Saving…');clearTimeout(st);st=setTimeout(function(){try{localStorage.setItem(KEY,JSON.stringify(fullState()));}catch(e){}setStatus('Saved');},650);}
+        function save(){try{localStorage.setItem(KEY,JSON.stringify(fullState()));setStatus('Saved');flash('Saved');}catch(e){flash('Saved for this session');}}
+        function loadState(){try{var d=JSON.parse(localStorage.getItem(KEY));if(d&&d.pages&&d.pages.length){pages=d.pages;active=Math.min(d.active||0,pages.length-1);return true;}}catch(e){}return false;}
+
+        function clean(){var c=FN.cloneNode(true);
+          c.querySelectorAll('.ed-secbar').forEach(function(e){e.remove();});
+          c.querySelectorAll('.ed-hidden').forEach(function(e){e.remove();});
+          c.querySelectorAll('[contenteditable]').forEach(function(e){e.removeAttribute('contenteditable');});
+          c.querySelectorAll('[draggable]').forEach(function(e){e.removeAttribute('draggable');});
+          c.querySelectorAll('.ed-sel').forEach(function(e){e.classList.remove('ed-sel');});
+          c.querySelectorAll('[data-ed-sel]').forEach(function(e){e.removeAttribute('data-ed-sel');e.style.position='';});
+          return c.innerHTML;}
+
+        /* ---------- section toolbars ---------- */
         function initSecs(){
           FN.querySelectorAll('.ed-secbar').forEach(function(b){b.remove();});
           var ch=FN.children;
@@ -1410,10 +1538,11 @@
             sec.appendChild(bar);
           }
         }
-        function leafish(el){if(!el.children.length)return true;var ok=['B','EM','STRONG','SPAN','S','SMALL','BR','I','U'];for(var i=0;i<el.children.length;i++){if(ok.indexOf(el.children[i].tagName)<0)return false;}return true;}
+        function leafish(el){if(!el.children.length)return true;var ok=['B','EM','STRONG','SPAN','S','SMALL','BR','I','U','A'];for(var i=0;i<el.children.length;i++){if(ok.indexOf(el.children[i].tagName)<0)return false;}return true;}
         function bindEdit(){FN.querySelectorAll(EDS).forEach(function(el){if(el.closest('.ed-secbar'))return;if(el.parentElement&&el.parentElement.closest('[contenteditable="true"]'))return;if(leafish(el))el.setAttribute('contenteditable','true');});}
         function unbindEdit(){FN.querySelectorAll('[contenteditable]').forEach(function(e){e.removeAttribute('contenteditable');});}
-        function setEdit(on){editing=on;document.body.classList.toggle('editing',on);$('#ed-edit').textContent=on?'Preview':'Edit';if(on){initSecs();bindEdit();}else{unbindEdit();hideElBar();}}
+        function setEdit(on){editing=on;document.body.classList.toggle('editing',on);$('#ed-edit').textContent=on?'Preview':'Edit';if(on){initSecs();bindEdit();renderLayers();}else{unbindEdit();hideElBar();hideRtb();}}
+
         FN.addEventListener('click',function(e){
           var b=e.target.closest('.ed-secbar button'); if(!b)return; e.preventDefault(); if(!editing)return;
           var sec=b.closest('[data-ed-sel]'),a=b.getAttribute('data-a'); pushUndo();
@@ -1423,7 +1552,7 @@
           else if(a==='del'){sec.remove();}
           else if(a==='hide'){sec.classList.toggle('ed-hidden');}
           else if(a==='bg'){openImg(sec,'bg');}
-          autosave();
+          renderLayers();autosave();
         });
         FN.addEventListener('click',function(e){
           if(!editing)return; if(e.target.closest('.ed-secbar'))return;
@@ -1432,7 +1561,9 @@
           var a=e.target.closest('a'); if(a)e.preventDefault();
         },true);
         FN.addEventListener('focusin',function(e){if(editing&&e.target.isContentEditable)pushUndo();});
-        FN.addEventListener('input',function(){if(editing)autosave();});
+        FN.addEventListener('input',function(){if(editing){autosave();}});
+
+        /* ---------- media replace modal ---------- */
         function openImg(t,m){imT=t;imM=m;$('#ed-url').value='';$('#ed-modal-t').textContent=(m==='bg'?'Replace section background':'Replace media (image or video)');var rb=$('#ed-bg-remove');rb.style.display=(m==='bg')?'inline-block':'none';rb.textContent=(t.classList&&(t.classList.contains('ed-hasbg')||t.classList.contains('hero')||t.classList.contains('finalcta')))?'Remove background':'Remove';$('#ed-modal').classList.add('show');}
         function closeImg(){$('#ed-modal').classList.remove('show');imT=null;}
         function clip(s){return s.split('&')[0].split('?')[0].split('#')[0].split('/')[0];}
@@ -1452,17 +1583,19 @@
         $('#ed-cancel').addEventListener('click',closeImg);
         $('#ed-bg-remove').addEventListener('click',removeBg);
         $('#ed-modal').addEventListener('click',function(e){if(e.target===this)closeImg();});
+
+        /* ---------- top bar wiring ---------- */
         $('#ed-edit').addEventListener('click',function(){setEdit(!editing);});
         $('#ed-undo').addEventListener('click',doUndo);
         $('#ed-redo').addEventListener('click',doRedo);
-        $('#ed-style').addEventListener('click',function(){$('#ed-panel').classList.toggle('show');});
-        $('#ed-save').addEventListener('click',save);
         $('#ed-export').addEventListener('click',exportHTML);
-        function copyHTML(){var t=buildClean();function fb(){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.top='-9999px';document.body.appendChild(ta);ta.focus();ta.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}ta.remove();flash(ok?'HTML copied to clipboard':'Copy failed — use Export');}try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){flash('HTML copied to clipboard');},fb);}else{fb();}}catch(e){fb();}}
         $('#ed-copy').addEventListener('click',copyHTML);
+        function copyHTML(){var t=buildClean();function fb(){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.top='-9999px';document.body.appendChild(ta);ta.focus();ta.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}ta.remove();flash(ok?'HTML copied':'Copy failed — use Export');}try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){flash('HTML copied');},fb);}else{fb();}}catch(e){fb();}}
         var seg=$('#ed-seg');
         seg.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;for(var i=0;i<seg.children.length;i++)seg.children[i].classList.remove('on');b.classList.add('on');device(b.getAttribute('data-d'));});
         function device(d){FN.classList.remove('is-tablet','is-mobile');if(d==='tablet'){FN.classList.add('is-tablet');FN.style.maxWidth='820px';FN.style.margin='0 auto';}else if(d==='mobile'){FN.classList.add('is-mobile');FN.style.maxWidth='402px';FN.style.margin='0 auto';}else{FN.style.maxWidth='';FN.style.margin='';}}
+
+        /* ---------- design controls ---------- */
         function setVar(k,v){pushUndo();document.documentElement.style.setProperty(k,v);autosave();}
         $('#pv-accent').addEventListener('input',function(){setVar('--accent',this.value);});
         $('#pv-text').addEventListener('input',function(){setVar('--text',this.value);});
@@ -1473,58 +1606,170 @@
         $('#pv-btnr').addEventListener('input',function(){setVar('--btnr',this.value+'px');});
         $('#pv-pad').addEventListener('input',function(){setVar('--pad',this.value+'px');});
         $('#pv-btn').addEventListener('change',function(){setVar('--btnbg',this.value==='grad'?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--accent)');});
-        function applySnap(s){FN.innerHTML=s.h;applyVars(s.v||{});if(editing){initSecs();bindEdit();}}
-        function doUndo(){if(!undo.length)return;redo.push(snap());applySnap(undo.pop());flash('Undo');}
-        function doRedo(){if(!redo.length)return;undo.push(snap());applySnap(redo.pop());flash('Redo');}
+
+        /* ---------- undo / redo ---------- */
+        function applySnap(s){FN.innerHTML=s.h;applyVars(s.v||{});if(editing){initSecs();bindEdit();renderLayers();}}
+        function doUndo(){if(!undo.length)return;redo.push(snap());applySnap(undo.pop());autosave();flash('Undo');}
+        function doRedo(){if(!redo.length)return;undo.push(snap());applySnap(redo.pop());autosave();flash('Redo');}
         document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase();if((e.ctrlKey||e.metaKey)&&k==='z'){e.preventDefault();e.shiftKey?doRedo():doUndo();}else if((e.ctrlKey||e.metaKey)&&k==='y'){e.preventDefault();doRedo();}else if((e.ctrlKey||e.metaKey)&&k==='s'){e.preventDefault();save();}});
+
+        /* ---------- export / publish ---------- */
         function dl(txt,name){var b=new Blob([txt],{type:'text/html'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},1500);}
         function buildClean(){var links='';document.querySelectorAll('head link').forEach(function(l){links+=l.outerHTML;});var base=document.getElementById('ed-base').innerHTML;var ov=':root{',v=vars();for(var k in v)ov+=k+':'+v[k]+';';ov+='}';return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+links+'<style>'+base+'</style><style>'+ov+'</style></head><body><div id="funnel">'+clean()+'</div></body></html>';}
-        function exportHTML(){dl(buildClean(),'funnel.html');flash('Exported — non-editable funnel');}
+        function exportHTML(){dl(buildClean(),'funnel.html');flash('Exported — clean funnel');}
         try{window.__funnelExport=buildClean;}catch(e){}
-        /* ---- component editor: hover toolbar (move / duplicate / delete / drag) + Add blocks ---- */
-        var MOV='.btn,.btn-ghost,h1,h2,h3,h4,.eyebrow,p,li,blockquote,img,.ed-media,.bcard,.tcard,.ptier,.pain,.pcard,.step,.timer,form,hr,.badge,.stars,.qstars,.bigprice,.price';
+        $('#ed-publish').addEventListener('click',function(){var slug=(pages[active]&&pages[active].name?pages[active].name:'funnel').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');$('#ed-pub-link').value='https://'+(slug||'funnel')+'.myfunnel.live';$('#ed-pub').classList.add('show');});
+        $('#ed-pub-close').addEventListener('click',function(){$('#ed-pub').classList.remove('show');});
+        $('#ed-pub').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
+        $('#ed-pub-copy').addEventListener('click',function(){var i=$('#ed-pub-link');i.select();try{document.execCommand('copy');}catch(e){}flash('Link copied');});
+        $('#ed-pub-export').addEventListener('click',function(){exportHTML();$('#ed-pub').classList.remove('show');});
+
+        /* ---------- floating element toolbar + reorder handle ---------- */
         var curEl=null,lastSec=null,hideT=null,elBar=$('#ed-el');
-        function placeBar(el){if(!el){return;}var r=el.getBoundingClientRect();var top=r.top-28;if(top<52)top=r.top+2;elBar.style.top=top+'px';elBar.style.left=Math.max(6,Math.min(window.innerWidth-150,r.left))+'px';elBar.style.display='flex';}
-        function selEl(el){if(curEl&&curEl!==el)curEl.classList.remove('ed-sel');curEl=el;if(el){el.classList.add('ed-sel');placeBar(el);}}
-        function hideElBar(){clearTimeout(hideT);if(elBar)elBar.style.display='none';if(curEl)curEl.classList.remove('ed-sel');curEl=null;}
-        function softHide(){clearTimeout(hideT);hideT=setTimeout(hideElBar,260);}
+        function placeBar(el){if(!el)return;var r=el.getBoundingClientRect();var top=r.top-30;if(top<54)top=r.top+4;elBar.style.top=top+'px';elBar.style.left=Math.max(6,Math.min(window.innerWidth-160,r.left))+'px';elBar.style.display='flex';}
+        function selEl(el){if(curEl&&curEl!==el)curEl.classList.remove('ed-sel');curEl=el;if(el){el.classList.add('ed-sel');placeBar(el);fillCtx(el);}}
+        function hideElBar(){clearTimeout(hideT);if(elBar)elBar.style.display='none';if(curEl)curEl.classList.remove('ed-sel');curEl=null;$('#ed-ctx').classList.remove('on');}
+        function softHide(){clearTimeout(hideT);hideT=setTimeout(hideElBar,300);}
         function keepBar(){clearTimeout(hideT);}
-        FN.addEventListener('mouseover',function(e){if(!editing)return;var s=e.target.closest('section,footer');if(s)lastSec=s;var m=e.target.closest(MOV);if(m&&FN.contains(m)&&!m.closest('.ed-secbar')){keepBar();if(m!==curEl)selEl(m);}});
+        FN.addEventListener('mouseover',function(e){if(!editing||dragging)return;var s=e.target.closest('section,footer');if(s)lastSec=s;var m=e.target.closest(MOV);if(m&&FN.contains(m)&&!m.closest('.ed-secbar')){keepBar();if(m!==curEl)selEl(m);}});
         FN.addEventListener('mouseleave',softHide);
         elBar.addEventListener('mouseenter',keepBar);
         elBar.addEventListener('mouseleave',softHide);
-        window.addEventListener('scroll',function(){if(curEl)placeBar(curEl);},true);
-        elBar.addEventListener('click',function(e){var b=e.target.closest('button');if(!b||!curEl)return;var a=b.getAttribute('data-a');pushUndo();
+        window.addEventListener('scroll',function(){if(curEl&&!dragging)placeBar(curEl);hideRtb();},true);
+        elBar.addEventListener('click',function(e){var b=e.target.closest('button');if(!b||!curEl)return;var a=b.getAttribute('data-a');if(a==='drag')return;pushUndo();
           if(a==='up'){var pv=curEl.previousElementSibling;while(pv&&pv.classList&&pv.classList.contains('ed-secbar'))pv=pv.previousElementSibling;if(pv)curEl.parentNode.insertBefore(curEl,pv);}
           else if(a==='down'){var nx=curEl.nextElementSibling;while(nx&&nx.classList&&nx.classList.contains('ed-secbar'))nx=nx.nextElementSibling;if(nx)curEl.parentNode.insertBefore(nx,curEl);}
           else if(a==='dup'){var c=curEl.cloneNode(true);c.classList.remove('ed-sel');curEl.parentNode.insertBefore(c,curEl.nextSibling);}
-          else if(a==='del'){var d=curEl;hideElBar();d.remove();autosave();return;}
-          bindEdit();autosave();placeBar(curEl);});
+          else if(a==='del'){var d=curEl;hideElBar();d.remove();bindEdit();renderLayers();autosave();return;}
+          bindEdit();renderLayers();autosave();placeBar(curEl);});
 
-        /* ---- Add blocks ---- */
-        function el(tag,cls,html){var n=document.createElement(tag);if(cls)n.className=cls;if(html!=null)n.innerHTML=html;return n;}
-        function buildBlock(type){
-          if(type==='heading')return el('h2',null,'New headline');
-          if(type==='subhead')return el('span','eyebrow plain','New label');
-          if(type==='text')return el('p',null,'New paragraph — click to edit this text and make it yours.');
-          if(type==='button'){var a=el('a','btn','New Button');a.setAttribute('href','#');return a;}
-          if(type==='list')return el('ul','ed-list','<li>First point — click to edit</li><li>Second point</li><li>Third point</li>');
-          if(type==='image'){var i=el('img','ed-media');i.setAttribute('src','https://picsum.photos/seed/'+Math.floor(Math.random()*99999)+'/900/560');i.setAttribute('alt','');return i;}
-          if(type==='video'){var w=el('div','mockup');w.innerHTML='<div class="mbar"><i></i><i></i><i></i></div>';var i2=el('img','ed-media');i2.setAttribute('src','https://picsum.photos/seed/'+Math.floor(Math.random()*99999)+'/900/520');w.appendChild(i2);return w;}
-          if(type==='divider')return el('hr',null,'');
-          if(type==='spacer')return el('div','ed-spacer','');
+        /* ---------- contextual inspector ---------- */
+        function fillCtx(el){var c=$('#ed-ctx');c.classList.add('on');var tag=el.tagName.toLowerCase();var label=tag==='a'&&el.classList.contains('btn')?'button':tag==='img'?'image':(/^h[1-4]$/.test(tag)?'heading':tag==='p'?'text':tag);$('#ctx-tag').textContent=label;
+          var cs=getComputedStyle(el);var al=cs.textAlign;[].forEach.call(document.querySelectorAll('#ctx-align button'),function(b){b.classList.toggle('on',b.getAttribute('data-al')===al||(al==='start'&&b.getAttribute('data-al')==='left'));});
+          var textish=/^(h1|h2|h3|h4|p|span|li|a|button|blockquote)$/.test(tag);
+          $('#ctx-size-row').style.display=textish?'flex':'none';$('#ctx-color-row').style.display=textish?'flex':'none';
+          if(textish){var fs=parseInt(cs.fontSize)||18;$('#ctx-size').value=Math.max(11,Math.min(84,fs));}
+          var isLink=tag==='a';$('#ctx-link-row').style.display=isLink?'flex':'none';if(isLink)$('#ctx-link').value=el.getAttribute('href')||'';}
+        document.querySelector('#ctx-align').addEventListener('click',function(e){var b=e.target.closest('button');if(!b||!curEl)return;pushUndo();curEl.style.textAlign=b.getAttribute('data-al');[].forEach.call(this.children,function(x){x.classList.remove('on');});b.classList.add('on');autosave();});
+        $('#ctx-size').addEventListener('input',function(){if(!curEl)return;curEl.style.fontSize=this.value+'px';autosave();});
+        $('#ctx-size').addEventListener('change',function(){pushUndo();});
+        $('#ctx-color').addEventListener('input',function(){if(!curEl)return;curEl.style.color=this.value;autosave();});
+        $('#ctx-link').addEventListener('change',function(){if(!curEl||curEl.tagName!=='A')return;pushUndo();curEl.setAttribute('href',this.value);autosave();});
+        $('#ctx-dup').addEventListener('click',function(){if(!curEl)return;pushUndo();var c=curEl.cloneNode(true);c.classList.remove('ed-sel');curEl.parentNode.insertBefore(c,curEl.nextSibling);bindEdit();renderLayers();autosave();});
+        $('#ctx-del').addEventListener('click',function(){if(!curEl)return;pushUndo();var d=curEl;hideElBar();d.remove();bindEdit();renderLayers();autosave();});
+
+        /* ---------- inline rich-text toolbar ---------- */
+        var rtb=$('#ed-rtb');
+        function hideRtb(){rtb.style.display='none';}
+        function showRtb(){var sel=window.getSelection();if(!sel||sel.rangeCount===0||sel.isCollapsed){hideRtb();return;}var an=sel.anchorNode;var ce=an&&(an.nodeType===1?an:an.parentElement);if(!ce||!ce.closest('[contenteditable="true"]')||!FN.contains(ce)){hideRtb();return;}var r=sel.getRangeAt(0).getBoundingClientRect();if(!r.width&&!r.height){hideRtb();return;}rtb.style.display='flex';var top=r.top-40;if(top<54)top=r.bottom+8;rtb.style.top=top+'px';rtb.style.left=Math.max(6,Math.min(window.innerWidth-280,r.left+r.width/2-130))+'px';}
+        FN.addEventListener('mouseup',function(){if(editing)setTimeout(showRtb,10);});
+        FN.addEventListener('keyup',function(e){if(editing&&e.shiftKey)setTimeout(showRtb,10);});
+        rtb.addEventListener('mousedown',function(e){if(e.target.tagName!=='INPUT')e.preventDefault();});
+        rtb.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var c=b.getAttribute('data-c');pushUndo();if(c==='link'){var u=prompt('Link URL:','https://');if(u)document.execCommand('createLink',false,u);}else{document.execCommand(c,false,null);}autosave();showRtb();});
+        $('#rtb-color').addEventListener('input',function(){pushUndo();document.execCommand('foreColor',false,this.value);autosave();});
+
+        /* ============ LEFT RAIL: tabs ============ */
+        var ltabs=document.querySelector('.ed-ltabs');
+        ltabs.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var t=b.getAttribute('data-lt');[].forEach.call(ltabs.children,function(x){x.classList.remove('on');});b.classList.add('on');['blocks','layers','pages'].forEach(function(n){$('#lp-'+n).classList.toggle('on',n===t);});if(t==='layers')renderLayers();if(t==='pages')renderPages();});
+
+        /* ---------- blocks library ---------- */
+        var BLOCKS=[
+          {cat:'Layout'},
+          {t:'section',ic:'▥',label:'Section'},{t:'columns',ic:'▦',label:'2 Columns'},
+          {t:'spacer',ic:'⬓',label:'Spacer'},{t:'divider',ic:'─',label:'Divider'},
+          {cat:'Text'},
+          {t:'heading',ic:'▌',label:'Heading'},{t:'subhead',ic:'—',label:'Eyebrow'},
+          {t:'text',ic:'¶',label:'Text'},{t:'list',ic:'☰',label:'Bullet list'},
+          {cat:'Media'},
+          {t:'image',ic:'▣',label:'Image'},{t:'video',ic:'►',label:'Video'},{t:'logos',ic:'❖',label:'Logo strip'},
+          {cat:'Buttons'},
+          {t:'button',ic:'▭',label:'Button'},{t:'btnrow',ic:'⧉',label:'Button row'},
+          {cat:'Convert'},
+          {t:'benefits',ic:'◇',label:'Benefits'},{t:'stats',ic:'📊',label:'Stat bar'},
+          {t:'testimonial',ic:'❝',label:'Testimonial'},{t:'faq',ic:'？',label:'FAQ'},
+          {t:'pricing',ic:'$',label:'Pricing'},{t:'countdown',ic:'⏱',label:'Countdown'},
+          {t:'form',ic:'✉',label:'Opt-in form'},{t:'guarantee',ic:'🛡',label:'Guarantee'}
+        ];
+        function renderBlocks(){var w=$('#lp-blocks'),h='',open=false;
+          BLOCKS.forEach(function(b){if(b.cat){if(open)h+='</div>';h+='<div class="ed-cat">'+b.cat+'</div><div class="ed-blocks">';open=true;}else{h+='<div class="ed-block" draggable="true" data-block="'+b.t+'"><span class="ic">'+b.ic+'</span>'+b.label+'</div>';}});
+          if(open)h+='</div>';w.innerHTML=h;}
+
+        function makeBlock(type){
+          if(type==='heading')return H('<h2>New headline goes here</h2>');
+          if(type==='subhead')return H('<span class="eyebrow plain">New label</span>');
+          if(type==='text')return H('<p>New paragraph — click to edit this text and make it yours.</p>');
+          if(type==='button')return H('<a href="#" class="btn">New Button</a>');
+          if(type==='btnrow')return H('<div class="hero-actions"><a href="#" class="btn">Get started</a><a href="#" class="btn-ghost" style="color:var(--accent)">Learn more →</a></div>');
+          if(type==='list')return H('<ul class="ed-list"><li>First key point — click to edit</li><li>Second point of value</li><li>Third reason to act now</li></ul>');
+          if(type==='image')return H('<img class="ed-media" alt="" src="https://picsum.photos/seed/'+rnd()+'/900/560">');
+          if(type==='video')return H('<div class="mockup"><div class="mbar"><i></i><i></i><i></i></div><img class="ed-media" src="https://picsum.photos/seed/'+rnd()+'/960/540"></div>');
+          if(type==='divider')return H('<hr>');
+          if(type==='spacer')return H('<div class="ed-spacer"></div>');
+          if(type==='columns')return H('<div class="bgrid c2"><div class="bcard"><h3>Column one</h3><p>Edit this column content.</p></div><div class="bcard"><h3>Column two</h3><p>Edit this column content.</p></div></div>');
+          if(type==='logos')return H('<div class="press"><em>As featured in</em><span>Forbes</span><span>Inc.</span><span>TechCrunch</span><span>Bloomberg</span></div>');
+          if(type==='benefits')return H('<div class="bgrid c3"><div class="bcard"><div class="bicon">✦</div><h3>More leads</h3><p>Capture the right people with an offer they cannot scroll past.</p></div><div class="bcard"><div class="bicon">⚡</div><h3>Higher conversions</h3><p>Every section moves visitors toward one clear action.</p></div><div class="bcard"><div class="bicon">★</div><h3>Proven to sell</h3><p>Built on the structure top marketers use to close cold traffic.</p></div></div>');
+          if(type==='stats')return H('<div class="metrics"><div><b>2.4x</b><span>conversions</span></div><div><b>1,200+</b><span>customers</span></div><div><b>4.9/5</b><span>average rating</span></div></div>');
+          if(type==='testimonial')return H('<div class="tcard"><div class="qstars">★★★★★</div><p>"This completely changed how we sell. Conversions doubled in two weeks."</p><div class="who"><img class="avatar" src="https://i.pravatar.cc/120?img='+(rnd()%60+1)+'" alt=""><div><strong>Jamie Rivera</strong><span>Founder</span></div></div></div>');
+          if(type==='faq')return H('<div class="faq"><details><summary>Do I need any tech skills?<span class="chev">+</span></summary><p>Not at all — if you can fill in a form, you can launch this.</p></details><details><summary>Is there a guarantee?<span class="chev">+</span></summary><p>Yes, you are covered by a money-back guarantee.</p></details><details><summary>Can I customize everything?<span class="chev">+</span></summary><p>Every section, color and word is yours to edit.</p></details></div>');
+          if(type==='pricing')return H('<div class="ponly"><div class="badge">Most popular</div><h3>Pro</h3><div class="price">$97<span>/mo</span></div><ul><li>Everything included</li><li>Priority support</li><li>Cancel anytime</li></ul><a href="#" class="btn btn-lg">Get started</a></div>');
+          if(type==='countdown')return H('<div class="timer"><div><b>11</b><span>hrs</span></div><div><b>42</b><span>min</span></div><div><b>08</b><span>sec</span></div></div>');
+          if(type==='form')return H('<form class="optin-form" onsubmit="return false"><input type="email" placeholder="you@email.com"><button class="btn btn-lg" type="submit">Get instant access</button></form>');
+          if(type==='guarantee')return H('<div class="guarantee center-g"><div class="seal">30<small>DAY</small></div><div><h2>Risk-free guarantee</h2><p class="muted">Love it or get a full refund within 30 days — no questions asked.</p></div></div>');
           return null;
         }
-        function hostForAdd(){var sec=lastSec||FN.querySelector('section');if(!sec){sec=el('section','sec');sec.appendChild(el('div','container center'));FN.appendChild(sec);initSecs();}var c=sec.querySelector(':scope > .container');return c||sec;}
-        function addBlock(type){pushUndo();
-          if(type==='section'){var s=el('section','sec');var c=el('div','container center','<span class="eyebrow plain">New section</span><h2>New section heading</h2><p>Add your content here.</p><a href="#" class="btn">Call to action</a>');s.appendChild(c);if(lastSec&&lastSec.nextSibling)FN.insertBefore(s,lastSec.nextSibling);else FN.appendChild(s);initSecs();bindEdit();autosave();flash('Section added');closeAdd();s.scrollIntoView({behavior:'smooth',block:'center'});return;}
-          var node=buildBlock(type);if(!node){return;}var host=hostForAdd();host.appendChild(node);bindEdit();autosave();flash('Block added');closeAdd();node.scrollIntoView({behavior:'smooth',block:'center'});}
-        function openAdd(){$('#ed-panel').classList.remove('show');$('#ed-addp').classList.add('show');}
-        function closeAdd(){$('#ed-addp').classList.remove('show');}
-        $('#ed-add').addEventListener('click',function(){$('#ed-addp').classList.toggle('show');if($('#ed-addp').classList.contains('show'))$('#ed-panel').classList.remove('show');});
-        $('#ed-addp').addEventListener('click',function(e){var b=e.target.closest('button[data-block]');if(b)addBlock(b.getAttribute('data-block'));});
+        function makeSection(){return H('<section class="sec"><div class="container center"><span class="eyebrow plain">New section</span><h2>New section heading</h2><p>Add your content here, or drag blocks into this section.</p><a href="#" class="btn">Call to action</a></div></section>');}
+        function hostForAdd(sec){sec=sec||lastSec||FN.querySelector('section');if(!sec){sec=makeSection();FN.appendChild(sec);initSecs();}var c=sec.querySelector(':scope > .container');return c||sec;}
 
-        restore(); setEdit(true);
+        /* click-to-add (adds into last hovered section) */
+        function clickAdd(type){pushUndo();if(type==='section'){var s=makeSection();if(lastSec&&lastSec.nextSibling)FN.insertBefore(s,lastSec.nextSibling);else FN.appendChild(s);initSecs();bindEdit();renderLayers();autosave();flash('Section added');s.scrollIntoView({behavior:'smooth',block:'center'});return;}var node=makeBlock(type);if(!node)return;hostForAdd().appendChild(node);bindEdit();renderLayers();autosave();flash('Block added');node.scrollIntoView({behavior:'smooth',block:'center'});}
+        $('#lp-blocks').addEventListener('click',function(e){var b=e.target.closest('.ed-block');if(b)clickAdd(b.getAttribute('data-block'));});
+
+        /* ============ DRAG & DROP (blocks + element reorder) ============ */
+        var dragging=false,dragType=null,dragEl=null,dropTarget=null,dropBefore=null;
+        var dropInd=$('#ed-drop');
+        function startDrag(mode,payload){dragging=true;document.body.classList.add('ed-dragging');hideRtb();if(mode==='new'){dragType=payload;dragEl=null;}else{dragType=null;dragEl=payload;}}
+        function endDrag(){dragging=false;document.body.classList.remove('ed-dragging');dropInd.style.display='none';dragType=null;dragEl=null;dropTarget=null;dropBefore=null;}
+        function notArt(n){return n.nodeType===1 && !n.classList.contains('ed-secbar') && !n.classList.contains('ed-ui');}
+        function secAt(x,y){var el=document.elementFromPoint(x,y);if(!el)return null;var s=el.closest('#funnel > section, #funnel > footer');if(s)return s;s=el.closest('section,footer');return (s&&FN.contains(s))?s:null;}
+        function computeDrop(x,y){var sec=secAt(x,y)||lastSec;if(!sec){dropInd.style.display='none';return;}var cont=sec.querySelector(':scope > .container')||sec;var kids=[].filter.call(cont.children,notArt);var before=null;for(var i=0;i<kids.length;i++){var r=kids[i].getBoundingClientRect();if(y<r.top+r.height/2){before=kids[i];break;}}dropTarget=cont;dropBefore=before;var cr=cont.getBoundingClientRect();var ty;if(before){ty=before.getBoundingClientRect().top-5;}else if(kids.length){ty=kids[kids.length-1].getBoundingClientRect().bottom+2;}else{ty=cr.top+10;}dropInd.style.display='block';dropInd.style.left=(cr.left+8)+'px';dropInd.style.width=(cr.width-16)+'px';dropInd.style.top=ty+'px';}
+        /* element drag handle */
+        elBar.querySelector('.ed-el-drag').addEventListener('dragstart',function(e){if(!curEl)return;startDrag('move',curEl);try{e.dataTransfer.setData('text/plain','el');e.dataTransfer.effectAllowed='move';}catch(_){}});
+        elBar.querySelector('.ed-el-drag').addEventListener('dragend',endDrag);
+        /* block drag from sidebar */
+        $('#lp-blocks').addEventListener('dragstart',function(e){var b=e.target.closest('.ed-block');if(!b)return;b.classList.add('dragging');startDrag('new',b.getAttribute('data-block'));try{e.dataTransfer.setData('text/plain',b.getAttribute('data-block'));e.dataTransfer.effectAllowed='copy';}catch(_){}});
+        $('#lp-blocks').addEventListener('dragend',function(e){var b=e.target.closest('.ed-block');if(b)b.classList.remove('dragging');endDrag();});
+        /* canvas dnd targets */
+        document.addEventListener('dragover',function(e){if(!dragging)return;e.preventDefault();try{e.dataTransfer.dropEffect=dragType?'copy':'move';}catch(_){}computeDrop(e.clientX,e.clientY);});
+        document.addEventListener('drop',function(e){if(!dragging)return;e.preventDefault();if(!dropTarget){endDrag();return;}pushUndo();var node;if(dragType==='section'){node=makeSection();if(lastSec&&lastSec.nextSibling)FN.insertBefore(node,lastSec.nextSibling);else FN.appendChild(node);initSecs();}else if(dragType){node=makeBlock(dragType);if(node){if(dropBefore)dropTarget.insertBefore(node,dropBefore);else dropTarget.appendChild(node);}}else if(dragEl){if(dropBefore){if(dropBefore!==dragEl)dropTarget.insertBefore(dragEl,dropBefore);}else dropTarget.appendChild(dragEl);node=dragEl;}bindEdit();renderLayers();autosave();var nd=node;endDrag();if(nd&&dragType)nd.scrollIntoView({behavior:'smooth',block:'center'});});
+
+        /* ============ LAYERS NAVIGATOR ============ */
+        function secName(sec){var h=sec.querySelector('h1,h2,h3');if(h&&h.textContent.trim())return h.textContent.trim().slice(0,26);var c=(sec.className||'').split(' ');var map={hero:'Hero',optin:'Opt-in',finalcta:'Final CTA',urgency:'Urgency',ffoot:'Footer',pricing:'Pricing'};for(var i=0;i<c.length;i++){if(map[c[i]])return map[c[i]];}return sec.tagName==='FOOTER'?'Footer':'Section';}
+        function elName(el){var t=el.tagName.toLowerCase();if(/^h[1-4]$/.test(t))return '▌ '+(el.textContent.trim().slice(0,22)||'Heading');if(t==='a'||t==='button')return '▭ '+(el.textContent.trim().slice(0,18)||'Button');if(t==='img')return '▣ Image';if(t==='p')return '¶ '+(el.textContent.trim().slice(0,22)||'Text');return '• '+t;}
+        var lrt;
+        function renderLayers(){clearTimeout(lrt);lrt=setTimeout(_renderLayers,80);}
+        function _renderLayers(){var w=$('#lp-layers');if(!w)return;var h='';var secs=[].filter.call(FN.children,function(n){return n.tagName==='SECTION'||n.tagName==='FOOTER';});if(!secs.length){w.innerHTML='<div class="ed-noselect" style="padding:4px 0">No sections yet.</div>';return;}secs.forEach(function(sec,i){var hidden=sec.classList.contains('ed-hidden');h+='<div class="ed-layer" data-sec="'+i+'"><span class="lic">▥</span><span class="lt">'+secName(sec)+'</span><span class="le" data-eye="'+i+'">'+(hidden?'◌':'◉')+'</span></div>';var kids=[].filter.call(sec.querySelectorAll('h1,h2,h3,p,a.btn,img.ed-media,.bgrid,.faq,.timer'),function(n){return n.closest('section,footer')===sec;}).slice(0,8);kids.forEach(function(el,j){h+='<div class="ed-layer child" data-sec="'+i+'" data-el="'+j+'">'+elName(el)+'</div>';});});w.innerHTML=h;}
+        $('#lp-layers').addEventListener('click',function(e){var eye=e.target.closest('[data-eye]');if(eye){var si=+eye.getAttribute('data-eye');var secs=[].filter.call(FN.children,function(n){return n.tagName==='SECTION'||n.tagName==='FOOTER';});var sec=secs[si];if(sec){pushUndo();sec.classList.toggle('ed-hidden');renderLayers();autosave();}return;}var row=e.target.closest('.ed-layer');if(!row)return;var si=+row.getAttribute('data-sec');var secs=[].filter.call(FN.children,function(n){return n.tagName==='SECTION'||n.tagName==='FOOTER';});var sec=secs[si];if(!sec)return;var target=sec;if(row.hasAttribute('data-el')){var ej=+row.getAttribute('data-el');var kids=[].filter.call(sec.querySelectorAll('h1,h2,h3,p,a.btn,img.ed-media,.bgrid,.faq,.timer'),function(n){return n.closest('section,footer')===sec;});if(kids[ej])target=kids[ej];}target.scrollIntoView({behavior:'smooth',block:'center'});[].forEach.call(this.querySelectorAll('.ed-layer'),function(x){x.classList.remove('sel');});row.classList.add('sel');if(target!==sec&&target.matches(MOV))selEl(target);});
+
+        /* ============ PAGES / FUNNEL STEPS ============ */
+        var STEP_TPL={
+          optin:'<section class="sec optin" id="cta"><div class="container narrow center"><span class="eyebrow plain">Free guide</span><h2>Get the free playbook</h2><p class="muted">Enter your email and we will send it straight to your inbox.</p><form class="optin-form" onsubmit="return false"><input type="email" placeholder="you@email.com"><button class="btn btn-lg" type="submit">Send it to me</button></form><p class="fineprint">No spam. Unsubscribe anytime.</p></div></section>',
+          sales:'<section class="sec"><div class="container center"><span class="eyebrow plain">The offer</span><h1>Your big promise headline</h1><p class="lede" style="margin:16px auto 26px">A subheadline that states the core promise in one clear, benefit-driven line.</p><a href="#" class="btn btn-lg">Get started</a></div></section><section class="sec alt"><div class="container center"><h2>Everything you get</h2><div class="bgrid c3" style="margin-top:34px"><div class="bcard"><div class="bicon">✦</div><h3>Benefit one</h3><p>Describe the outcome customers get.</p></div><div class="bcard"><div class="bicon">⚡</div><h3>Benefit two</h3><p>Describe the outcome customers get.</p></div><div class="bcard"><div class="bicon">★</div><h3>Benefit three</h3><p>Describe the outcome customers get.</p></div></div></div></section>',
+          checkout:'<section class="sec"><div class="container narrow"><h2 class="center">Complete your order</h2><div class="bgrid c2" style="margin-top:30px"><div class="bcard"><h3 style="margin-bottom:14px">Your details</h3><form class="optin-form" onsubmit="return false" style="flex-direction:column;max-width:none"><input placeholder="Full name"><input type="email" placeholder="Email address"><input placeholder="Card number"><button class="btn btn-lg" type="submit">Pay now</button></form></div><div class="bcard"><h3 style="margin-bottom:14px">Order summary</h3><div class="srow"><span class="sname">Main offer</span><span class="sval">$97</span></div><div class="srow"><span class="sname">Bonus pack</span><span class="sval">Free</span></div><div class="srow total"><span class="sname">Total</span><span class="sval">$97</span></div></div></div></div></section>',
+          upsell:'<section class="sec"><div class="container narrow center"><span class="eyebrow plain">One-time offer</span><h2>Wait — add this to your order</h2><p class="lede" style="margin:14px auto 24px">A special one-click upgrade you will only see once. Add it to your order at this exclusive price.</p><a href="#" class="btn btn-lg">Yes — add it to my order</a><div style="margin-top:14px"><a href="#" class="btn-ghost" style="color:var(--muted)">No thanks, I will pass</a></div></div></section>',
+          thankyou:'<section class="sec center"><div class="container narrow"><div class="seal" style="margin:0 auto 18px">✓</div><h2>Thank you!</h2><p class="lede" style="margin:14px auto 0">Your order is confirmed. Check your inbox for next steps and your access details.</p></div></section>',
+          blank:'<section class="sec"><div class="container center"><span class="eyebrow plain">New page</span><h2>New page section</h2><p>Start building this step — drag blocks from the left.</p><a href="#" class="btn">Call to action</a></div></section>'
+        };
+        var STEP_LABEL={optin:'Opt-in',sales:'Sales',checkout:'Checkout',upsell:'Upsell',thankyou:'Thank-you',blank:'Page',main:'Main'};
+        function newId(){return 'p'+Date.now().toString(36)+Math.floor(Math.random()*999);}
+        function renderPages(){var w=$('#ed-pagelist');if(!w)return;var h='';pages.forEach(function(p,i){h+='<div class="ed-page'+(i===active?' on':'')+'" data-pg="'+i+'"><span class="pnum">'+(i+1)+'</span><span class="pmeta"><span class="pnm">'+(p.name||'Page')+'</span><span class="pty">'+(STEP_LABEL[p.type]||'Page')+'</span></span><span class="pact"><button data-pa="rename" data-i="'+i+'" title="Rename">✎</button><button data-pa="dup" data-i="'+i+'" title="Duplicate">⧉</button><button data-pa="del" data-i="'+i+'" title="Delete">✕</button></span></div>';});w.innerHTML=h;}
+        function switchPage(i){if(i===active||i<0||i>=pages.length)return;commitActive();active=i;FN.innerHTML=pages[i].html;applyVars(pages[i].vars||{});undo=[];redo=[];if(editing){initSecs();bindEdit();}renderPages();renderLayers();window.scrollTo(0,0);autosave();}
+        function addStep(type){commitActive();var tpl=STEP_TPL[type]||STEP_TPL.blank;var count=pages.filter(function(p){return p.type===type;}).length;pages.push({id:newId(),name:STEP_LABEL[type]+(count?' '+(count+1):''),type:type,html:tpl,vars:vars()});active=pages.length-1;FN.innerHTML=pages[active].html;undo=[];redo=[];if(editing){initSecs();bindEdit();}renderPages();renderLayers();window.scrollTo(0,0);autosave();flash(STEP_LABEL[type]+' page added');}
+        $('#ed-addstep').addEventListener('click',function(){addStep($('#ed-newstep').value);});
+        $('#ed-pagelist').addEventListener('click',function(e){var act=e.target.closest('[data-pa]');if(act){var i=+act.getAttribute('data-i');var pa=act.getAttribute('data-pa');if(pa==='rename'){var nv=prompt('Page name:',pages[i].name);if(nv){pages[i].name=nv;renderPages();autosave();}}else if(pa==='dup'){commitActive();var src=pages[i];pages.splice(i+1,0,{id:newId(),name:src.name+' copy',type:src.type,html:src.html,vars:src.vars});renderPages();autosave();flash('Page duplicated');}else if(pa==='del'){if(pages.length<=1){flash('Keep at least one page');return;}if(!confirm('Delete this page?'))return;pages.splice(i,1);if(active>=pages.length)active=pages.length-1;else if(i<active)active--;FN.innerHTML=pages[active].html;applyVars(pages[active].vars||{});if(editing){initSecs();bindEdit();}renderPages();renderLayers();autosave();}return;}var row=e.target.closest('[data-pg]');if(row)switchPage(+row.getAttribute('data-pg'));});
+
+        /* ============ INIT ============ */
+        function bootPages(){if(!loadState()){pages=[{id:newId(),name:'Main page',type:'main',html:FN.innerHTML,vars:vars()}];active=0;}else{FN.innerHTML=pages[active].html;applyVars(pages[active].vars||{});}}
+        renderBlocks();bootPages();setEdit(true);renderPages();
       })();
       <\/script>`;
 
