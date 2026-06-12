@@ -1776,7 +1776,7 @@
             .replace('html{scroll-behavior:smooth}','')
             .replace('body{background:var(--bg);','#funnel{background:var(--bg);min-height:auto;');
           var ov=':root{',v=vars();for(var k in v)ov+=k+':'+v[k]+';';ov+='}';
-          return '<!-- Paste into a GoHighLevel Custom HTML / Code element (full-width 1-column row) -->\n'+links+'\n<style>'+base+ov+'</style>\n<div id="funnel">'+clean()+'</div>';}
+          return '<!-- Paste into a GoHighLevel Custom HTML / Code element (full-width 1-column row) -->'+links+'<style>'+base+ov+'</style><div id="funnel">'+clean()+'</div>';}
         try{window.__funnelExport=buildClean;window.__funnelGHL=buildGHL;}catch(e){}
         $('#ed-publish').addEventListener('click',function(){var slug=(pages[active]&&pages[active].name?pages[active].name:'funnel').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');$('#ed-pub-link').value='https://'+(slug||'funnel')+'.myfunnel.live';$('#ed-pub').classList.add('show');});
         $('#ed-pub-close').addEventListener('click',function(){$('#ed-pub').classList.remove('show');});
