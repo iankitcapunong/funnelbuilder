@@ -6,3 +6,5 @@ Thumbs.db
 # scratch
 *.tmp
 newfunc.txt
+.*.js
+.neweditor.txt
