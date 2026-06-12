@@ -959,12 +959,13 @@
       const motif    = pick(["none","none","dots","grid","glow"]);
       const heroShape= pick(["none","none","wave","curve"]);
       const heroV    = pick(["right","left","center","spotlight"]);
+      const heroBgK  = pick(["photo","photo","photo","gradient","solid","mesh"]); // hero background treatment
       const heroMediaK = heroV==="center" ? pick(["mockup","photo","stats"]) : pick(["mockup","photo","stats","mockup"]);
       const benCols  = pick([2,3,3,4]);
       const benCount = benCols===2?4:benCols===4?4:pick([3,6]);
-      const benV     = pick(["card","iconTop","leftBar","numbered"]);
-      const hiwV     = pick(["row","timeline","zigzag"]);
-      const tV       = pick(["grid","feature","grid"]);
+      const benV     = pick(["card","iconTop","leftBar","numbered","card","iconTop"]);
+      const hiwV     = pick(["row","timeline","zigzag","row","timeline"]);
+      const tV       = pick(["grid","feature","grid","feature"]);
       const priceV   = pick(["three","three","single"]);
       const faqV     = pick(["accordion","accordion","twocol"]);
       const stackV   = pick(["list","twocol"]);
@@ -1082,7 +1083,7 @@
       /* ---------- section renderers ---------- */
       const R = {};
       R["Hero Offer"] = ()=>`
-      <section class="hero v-${heroV}" style="--heroimg:url('${sceneUrl(1600,1000)}')">
+      <section class="hero v-${heroV} hb-${heroBgK}" style="--heroimg:${heroBgK==="photo"?`url('${sceneUrl(1600,1000)}')`:"none"}">
         <div class="hero-ov"></div>
         <nav class="container fnav"><div class="brand">${esc(brand)}</div><a href="#cta" class="btn btn-sm">${esc(cta)}</a></nav>
         <div class="container hero-grid">
@@ -1108,7 +1109,7 @@
         const head = pick(["Sound familiar?","If this is you, keep reading","Here's the hard truth","Does this sound like you?"]);
         const sol  = pick(["Here's the good news: it doesn't have to be this way.","Imagine flipping every one of these on its head.","There's a simpler path — and it starts right here."]);
         const rev  = chance(.5);
-        return `<section class="sec ${alt?"alt":""}"><div class="container ps ${rev?"rev":""}">
+        return `<section class="sec ${alt||""}"><div class="container ps ${rev?"rev":""}">
           <div class="ps-photo">${sceneImg(900,1040)}<span class="ps-tag">${esc(pick(["The old way","Before","Sound familiar?"]))}</span></div>
           <div class="ps-body">${eb("The problem")}<h2>${esc(head)}</h2>
             <ul class="ps-list">${pains.map(t=>`<li><span class="x">✕</span>${esc(t)}</li>`).join("")}</ul>
@@ -1118,7 +1119,7 @@
 
       R["Social Proof"] = (alt)=>{
         const metrics=pickN([["1,200+","happy customers"],["4.9/5","average rating"],["98%","would recommend"],["$28M+","revenue driven"],["12k+","leads captured"]],3);
-        return `<section class="sec slim ${alt?"alt":""}"><div class="container center">
+        return `<section class="sec slim ${alt||""}"><div class="container center">
           <div class="proofrow">${avstack(5)}<div class="proof-meta"><div class="qstars">★★★★★</div><span>${esc(pick(["Rated 5 stars by 1,200+ customers","Trusted by thousands worldwide","Join 1,200+ happy members"]))}</span></div></div>
           <div class="press"><em>As featured in</em>${pickN(PRESS,5).map(x=>`<span>${esc(x)}</span>`).join("")}</div>
           <div class="metrics">${metrics.map(m=>`<div><b>${m[0]}</b><span>${esc(m[1])}</span></div>`).join("")}</div>
@@ -1126,16 +1127,16 @@
       };
 
       R["Benefits"] = (alt)=>`
-      <section class="sec ${alt?"alt":""}"><div class="container center">
+      <section class="sec ${alt||""}"><div class="container center">
         ${eb(benEye)}<h2>${esc(benHead)}</h2>
         <div class="bgrid c${benCols} ben-${benV}">${benefits.map((b,i)=>`<div class="bcard">${benV==="numbered"?`<div class="bnum">${i+1}</div>`:`<div class="bicon">${b[0]}</div>`}<h3>${esc(b[1])}</h3><p>${esc(b[2])}</p></div>`).join("")}</div>
       </div></section>`;
 
       R["How It Works"] = (alt)=>{
         const head=`${eb("How it works")}<h2>${esc(hiwHead)}</h2>`;
-        if(hiwV==="timeline") return `<section class="sec ${alt?"alt":""}"><div class="container narrow center">${head}<div class="timeline">${hiw.map((s,i)=>`<div class="tl-step"><div class="tl-dot">${i+1}</div><div class="tl-body"><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p></div></div>`).join("")}</div></div></section>`;
-        if(hiwV==="zigzag") return `<section class="sec ${alt?"alt":""}"><div class="container"><div class="center">${head}</div><div class="zig">${hiw.map((s,i)=>`<div class="zrow ${i%2?"rev":""}"><div class="znum">${i+1}</div><div class="zbody"><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p></div></div>`).join("")}</div></div></section>`;
-        return `<section class="sec ${alt?"alt":""}"><div class="container center">${head}<div class="steps">${hiw.map((s,i)=>`<div class="step"><div class="snum">${i+1}</div><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p></div>`).join("")}</div></div></section>`;
+        if(hiwV==="timeline") return `<section class="sec ${alt||""}"><div class="container narrow center">${head}<div class="timeline">${hiw.map((s,i)=>`<div class="tl-step"><div class="tl-dot">${i+1}</div><div class="tl-body"><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p></div></div>`).join("")}</div></div></section>`;
+        if(hiwV==="zigzag") return `<section class="sec ${alt||""}"><div class="container"><div class="center">${head}</div><div class="zig">${hiw.map((s,i)=>`<div class="zrow ${i%2?"rev":""}"><div class="znum">${i+1}</div><div class="zbody"><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p></div></div>`).join("")}</div></div></section>`;
+        return `<section class="sec ${alt||""}"><div class="container center">${head}<div class="steps">${hiw.map((s,i)=>`<div class="step"><div class="snum">${i+1}</div><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p></div>`).join("")}</div></div></section>`;
       };
 
       R["Offer Stack"] = (alt)=>{
@@ -1143,8 +1144,8 @@
         const rows=stackItems.map((it,i)=>`<div class="srow"><span class="check">✓</span><span class="sname">${esc(it[0])}${i>=last?` <em class="bonus">BONUS</em>`:""}</span><span class="sval">${esc(it[1])}</span></div>`).join("");
         const total=`<div class="srow total"><span class="check">＝</span><span class="sname">Total value</span><span class="sval"><s>$${stackTotal.toLocaleString()}</s></span></div>`;
         const priceBlk=`<div class="reveal-price"><p class="muted">${esc(pick(["Get everything today for just","Yours today for only","Start now for just"]))}</p><div class="bigprice">${esc(todayPrice)}</div><a href="#cta" class="btn btn-lg">${esc(cta)}</a></div>`;
-        if(stackV==="twocol") return `<section class="sec ${alt?"alt":""}"><div class="container stack-split"><div><div style="text-align:left">${eb("Here's the deal")}<h2>${esc(stackHead)}</h2></div><div class="stack">${rows}${total}</div></div><div class="stack-aside">${priceBlk}</div></div></section>`;
-        return `<section class="sec ${alt?"alt":""}"><div class="container narrow center">${eb("Here's the deal")}<h2>${esc(stackHead)}</h2><div class="stack">${rows}${total}</div>${priceBlk}</div></section>`;
+        if(stackV==="twocol") return `<section class="sec ${alt||""}"><div class="container stack-split"><div><div style="text-align:left">${eb("Here's the deal")}<h2>${esc(stackHead)}</h2></div><div class="stack">${rows}${total}</div></div><div class="stack-aside">${priceBlk}</div></div></section>`;
+        return `<section class="sec ${alt||""}"><div class="container narrow center">${eb("Here's the deal")}<h2>${esc(stackHead)}</h2><div class="stack">${rows}${total}</div>${priceBlk}</div></section>`;
       };
 
       R["Authority"] = (alt)=>{
@@ -1157,7 +1158,7 @@
         ]);
         const creds=pickN([["12+","years experience"],["3,400+","clients served"],["$28M+","revenue generated"],["50+","countries reached"],["4.9/5","average rating"]],3);
         const rev=chance(.5);
-        return `<section class="sec ${alt?"alt":""}"><div class="container auth ${rev?"rev":""}">
+        return `<section class="sec ${alt||""}"><div class="container auth ${rev?"rev":""}">
           <div class="auth-photo">${faceImg(2,"auth-img")}<div class="auth-chip">★ ${esc(pick(["Trusted expert","As seen on stage","Industry leader","Featured speaker"]))}</div></div>
           <div class="auth-body">${eb("Meet your host")}<h2>${esc(fname)}</h2><p class="auth-title">${esc(ftitle)}</p><p>${esc(bio)}</p>
             <div class="creds">${creds.map(c=>`<div><b>${c[0]}</b><span>${esc(c[1])}</span></div>`).join("")}</div>
@@ -1172,19 +1173,19 @@
         }else{
           inner=`<div class="bgrid c3">${tQuotes.map((q,i)=>`<div class="tcard"><div class="qstars">★★★★★</div><p>“${esc(q)}”</p>${who(tNames[i],i)}</div>`).join("")}</div>`;
         }
-        return `<section class="sec ${alt?"alt":""}"><div class="container center">${eb("Real results")}<h2>${esc(tHead)}</h2>${inner}</div></section>`;
+        return `<section class="sec ${alt||""}"><div class="container center">${eb("Real results")}<h2>${esc(tHead)}</h2>${inner}</div></section>`;
       };
 
       R["Pricing"] = (alt)=>{
         if(priceV==="single"){ const i=bestIdx;
-          return `<section class="sec ${alt?"alt":""}" id="pricing"><div class="container narrow center">${eb("Pricing")}<h2>${esc(priceHead)}</h2><div class="ponly"><div class="badge">${esc(pick(["Best value","Most popular","Launch deal"]))}</div><h3>${esc(tierNames[i])}</h3><div class="price">${esc(tierPrices[i])}<span>/mo</span></div><ul>${tierFeats[1].map(f=>`<li>${esc(f)}</li>`).join("")}</ul><a href="#cta" class="btn btn-lg">${esc(cta)}</a></div></div></section>`; }
-        return `<section class="sec ${alt?"alt":""}" id="pricing"><div class="container center">${eb("Pricing")}<h2>${esc(priceHead)}</h2>
+          return `<section class="sec ${alt||""}" id="pricing"><div class="container narrow center">${eb("Pricing")}<h2>${esc(priceHead)}</h2><div class="ponly"><div class="badge">${esc(pick(["Best value","Most popular","Launch deal"]))}</div><h3>${esc(tierNames[i])}</h3><div class="price">${esc(tierPrices[i])}<span>/mo</span></div><ul>${tierFeats[1].map(f=>`<li>${esc(f)}</li>`).join("")}</ul><a href="#cta" class="btn btn-lg">${esc(cta)}</a></div></div></section>`; }
+        return `<section class="sec ${alt||""}" id="pricing"><div class="container center">${eb("Pricing")}<h2>${esc(priceHead)}</h2>
           <div class="bgrid c3 pricing">${tierNames.map((nm,i)=>`<div class="ptier${i===bestIdx?" best":""}">${i===bestIdx?'<div class="badge">Most popular</div>':""}<h3>${esc(nm)}</h3><div class="price">${esc(tierPrices[i])}<span>/mo</span></div><ul>${tierFeats[i].map(f=>`<li>${esc(f)}</li>`).join("")}</ul><a href="#cta" class="btn ${i===bestIdx?"btn-lg":"btn-outline"}">${esc(cta)}</a></div>`).join("")}</div>
         </div></section>`;
       };
 
       R["Guarantee"] = (alt)=>`
-      <section class="sec ${alt?"alt":""}"><div class="container narrow"><div class="guarantee ${chance(.5)?"center-g":""}">
+      <section class="sec ${alt||""}"><div class="container narrow"><div class="guarantee ${chance(.5)?"center-g":""}">
         <div class="seal">${esc(gDays)}<small>DAY</small></div><div><h2>${esc(gHead)}</h2><p class="muted">${esc(gBody)}</p></div>
       </div></div></section>`;
 
@@ -1195,7 +1196,7 @@
 
       R["FAQ"] = (alt)=>{
         const items=faqs.map(q=>`<details><summary>${esc(q[0])}<span class="chev">+</span></summary><p>${esc(q[1])}</p></details>`).join("");
-        return `<section class="sec ${alt?"alt":""}"><div class="container ${faqV==="twocol"?"":"narrow"} center">${eb("Questions")}<h2>${esc(faqHead)}</h2><div class="faq ${faqV==="twocol"?"faq2":""}">${items}</div></div></section>`;
+        return `<section class="sec ${alt||""}"><div class="container ${faqV==="twocol"?"":"narrow"} center">${eb("Questions")}<h2>${esc(faqHead)}</h2><div class="faq ${faqV==="twocol"?"faq2":""}">${items}</div></div></section>`;
       };
 
       R["Lead Capture"] = ()=>`
@@ -1216,9 +1217,23 @@
 
       /* ---------- assemble ---------- */
       const ownsBg = {"Hero Offer":1,"Urgency":1,"Lead Capture":1,"Final CTA":1,"Footer":1};
-      let stripe = 0;
       const chosen = state.sections.length ? state.sections : ["Hero Offer","Footer"];
-      const body = announce + chosen.map(k=>{ const fn=R[k]; if(!fn) return ""; if(ownsBg[k]) return fn(false); const alt=(stripe%2===1); stripe++; return fn(alt); }).join("\n");
+      // varied background rhythm — never two identical bands in a row, with the occasional
+      // accent-tinted "soft" band, so every generation/shuffle reads differently.
+      const softOk = chance(.7);            // some funnels use soft bands, some don't
+      let prevTone = "alt";                 // makes the first content band most likely plain
+      const nextTone = ()=>{
+        let opts;
+        if(prevTone==="") opts = softOk ? ["alt","alt","soft"] : ["alt","alt","alt"];
+        else if(prevTone==="alt") opts = softOk ? ["","","","soft"] : ["","",""];
+        else opts = ["","alt"];             // after a soft band, calm it back down
+        const t = pick(opts); prevTone = t; return t;
+      };
+      const body = announce + chosen.map(k=>{
+        const fn=R[k]; if(!fn) return "";
+        if(ownsBg[k]){ prevTone="alt"; return fn(false); }   // full-bg sections reset the rhythm
+        return fn(nextTone());
+      }).join("\n");
 
       const motifBg = motif==="dots" ? `background-image:radial-gradient(${p.border} 1.1px,transparent 1.1px);background-size:24px 24px;`
         : motif==="grid" ? `background-image:linear-gradient(${p.border} 1px,transparent 1px),linear-gradient(90deg,${p.border} 1px,transparent 1px);background-size:46px 46px;`
@@ -1247,6 +1262,7 @@
         p{color:var(--muted)}.muted{color:var(--muted)}
         .announce{background:var(--accent);color:var(--on);text-align:center;padding:10px 14px;font-size:13.5px;font-weight:600}
         .sec{padding:var(--pad) 0;position:relative}.sec.slim{padding:40px 0}.sec.alt{background:var(--alt)}
+        .sec.soft{background:linear-gradient(180deg,var(--tint),var(--alt))}
         .ed-hasbg{background-image:var(--secbg);background-size:cover;background-position:center;background-repeat:no-repeat;position:relative}
         .ed-hasbg::before{content:"";position:absolute;inset:0;z-index:0;background:color-mix(in srgb, var(--bg) 72%, transparent)}
         .sec.alt.ed-hasbg::before,.sec.urgency.ed-hasbg::before,.sec.optin.ed-hasbg::before{background:color-mix(in srgb, var(--alt) 72%, transparent)}
@@ -1269,6 +1285,13 @@
         /* hero */
         .hero{position:relative;background:#0b0b11 var(--heroimg) center/cover no-repeat;color:#fff;padding-bottom:${heroShape==="none"?88:108}px;overflow:hidden}
         .hero-ov{position:absolute;inset:0;background:${heroOv}}
+        /* flat hero treatments (no photo) — give each generation a distinct backdrop */
+        .hero.hb-gradient{background:linear-gradient(${rint(120,165)}deg, ${hsl(p.hue,Math.min(80,p.accS+6),p.dark?34:42)}, ${hsl(p.hue2,Math.min(82,p.accS+8),p.dark?22:32)})}
+        .hero.hb-gradient .hero-ov{background:linear-gradient(180deg, rgba(8,10,14,.28), rgba(8,10,14,.5))}
+        .hero.hb-solid{background:${hsl(p.hue,p.dark?20:24,p.dark?7:10)}}
+        .hero.hb-solid .hero-ov{background:radial-gradient(820px 520px at ${pick([24,50,76])}% -8%, ${hsla(p.hue,60,32,.5)}, transparent 62%), radial-gradient(640px 420px at 88% 110%, ${hsla(p.hue2,60,34,.32)}, transparent 60%)}
+        .hero.hb-mesh{background:${hsl(p.hue,22,8)}}
+        .hero.hb-mesh .hero-ov{background:radial-gradient(560px 420px at 12% 0%, ${hsla(p.hue,70,40,.55)}, transparent 55%), radial-gradient(620px 460px at 90% 8%, ${hsla(p.hue2,70,42,.45)}, transparent 58%), radial-gradient(700px 520px at 50% 120%, ${hsla(p.hue,64,38,.4)}, transparent 60%)}
         .hero>.container,.hero>nav{position:relative;z-index:2}.hero .hshape{z-index:2}
         .fnav{display:flex;align-items:center;justify-content:space-between;padding:22px 24px}
         .brand{font-family:var(--head);font-weight:780;font-size:21px;letter-spacing:-.02em;color:#fff}
